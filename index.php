@@ -1,4 +1,7 @@
 <?php
+// Tampilkan semua error
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 // index.php - Landing Page Utama
 include 'config.php';
 
