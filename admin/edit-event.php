@@ -2,19 +2,41 @@
 require_once '../config.php';
 require_login();
 
+// Get event ID
+if (!isset($_GET['id']) || empty($_GET['id'])) {
+    redirect('events.php');
+}
+
+ $event_id = (int)$_GET['id'];
+
+// Get event data
+ $query = "SELECT * FROM events WHERE id = $event_id";
+ $result = mysqli_query($conn, $query);
+
+if (mysqli_num_rows($result) == 0) {
+    redirect('events.php');
+}
+
+ $event = mysqli_fetch_assoc($result);
+
 // Process form submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $title = clean_input($_POST['title']);
-    $content = clean_input($_POST['content']);
-    $category = clean_input($_POST['category']);
-    $author = clean_input($_POST['author']);
+    $description = clean_input($_POST['description']);
+    $event_date = clean_input($_POST['event_date']);
+    $time = clean_input($_POST['time']);
+    $location = clean_input($_POST['location']);
+    $organizer = clean_input($_POST['organizer']);
+    $requirements = clean_input($_POST['requirements']);
+    $contact_info = clean_input($_POST['contact_info']);
+    $current_image = $event['image'];
     
     // Validate form data
-    if (empty($title) || empty($content) || empty($category) || empty($author)) {
-        $error = "Semua field harus diisi.";
+    if (empty($title) || empty($description) || empty($event_date) || empty($time) || empty($location) || empty($organizer)) {
+        $error = "Field dengan tanda * harus diisi.";
     } else {
         // Handle image upload
-        $image = '';
+        $image = $current_image;
         if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
             $allowed_types = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
             $file_type = $_FILES['image']['type'];
@@ -25,6 +47,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $upload_dir = '../uploads/';
                 
                 if (move_uploaded_file($file_tmp, $upload_dir . $file_name)) {
+                    // Delete old image if exists
+                    if (!empty($current_image) && file_exists($upload_dir . $current_image)) {
+                        unlink($upload_dir . $current_image);
+                    }
+                    
                     $image = $file_name;
                 } else {
                     $error = "Gagal mengupload gambar.";
@@ -35,15 +62,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         
         if (!isset($error)) {
-            // Insert post into database
-            $query = "INSERT INTO posts (title, content, category, author, image, created_at) 
-                      VALUES ('$title', '$content', '$category', '$author', '$image', NOW())";
+            // Update event in database
+            $query = "UPDATE events SET 
+                      title = '$title', 
+                      description = '$description', 
+                      event_date = '$event_date', 
+                      time = '$time', 
+                      location = '$location', 
+                      organizer = '$organizer', 
+                      requirements = '$requirements', 
+                      contact_info = '$contact_info', 
+                      image = '$image' 
+                      WHERE id = $event_id";
             
             if (mysqli_query($conn, $query)) {
-                $_SESSION['success'] = "Berita berhasil ditambahkan.";
-                redirect('posts.php');
+                $_SESSION['success'] = "Kegiatan berhasil diperbarui.";
+                redirect('events.php');
             } else {
-                $error = "Terjadi kesalahan. Berita gagal ditambahkan.";
+                $error = "Terjadi kesalahan. Kegiatan gagal diperbarui.";
             }
         }
     }
@@ -55,7 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tambah Berita - Admin Panel</title>
+    <title>Edit Kegiatan - Admin Panel</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -81,7 +117,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         .preview-image {
             max-width: 100%;
             max-height: 200px;
-            display: none;
         }
     </style>
 </head>
@@ -103,12 +138,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             </a>
                         </li>
                         <li>
-                            <a href="posts.php" class="nav-link active">
+                            <a href="posts.php" class="nav-link">
                                 <i class="bi bi-newspaper me-2"></i> Berita
                             </a>
                         </li>
                         <li>
-                            <a href="events.php" class="nav-link">
+                            <a href="events.php" class="nav-link active">
                                 <i class="bi bi-calendar-event me-2"></i> Kegiatan
                             </a>
                         </li>
@@ -146,10 +181,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <!-- Main Content -->
             <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2">Tambah Berita Baru</h1>
+                    <h1 class="h2">Edit Kegiatan</h1>
                     <div class="btn-toolbar mb-2 mb-md-0">
                         <div class="btn-group me-2">
-                            <a href="posts.php" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Kembali</a>
+                            <a href="events.php" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Kembali</a>
                         </div>
                     </div>
                 </div>
@@ -163,43 +198,69 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 
                 <div class="card shadow-sm">
                     <div class="card-body">
-                        <form action="add-post.php" method="POST" enctype="multipart/form-data">
-                            <div class="mb-3">
-                                <label for="title" class="form-label">Judul Berita</label>
-                                <input type="text" class="form-control" id="title" name="title" required>
+                        <form action="edit-event.php?id=<?php echo $event_id; ?>" method="POST" enctype="multipart/form-data">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="title" class="form-label">Nama Kegiatan <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="title" name="title" value="<?php echo $event['title']; ?>" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="organizer" class="form-label">Penanggung Jawab <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="organizer" name="organizer" value="<?php echo $event['organizer']; ?>" required>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="event_date" class="form-label">Tanggal Kegiatan <span class="text-danger">*</span></label>
+                                        <input type="date" class="form-control" id="event_date" name="event_date" value="<?php echo $event['event_date']; ?>" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="time" class="form-label">Waktu <span class="text-danger">*</span></label>
+                                        <input type="time" class="form-control" id="time" name="time" value="<?php echo $event['time']; ?>" required>
+                                    </div>
+                                </div>
                             </div>
                             
                             <div class="mb-3">
-                                <label for="category" class="form-label">Kategori</label>
-                                <select class="form-select" id="category" name="category" required>
-                                    <option value="">Pilih Kategori</option>
-                                    <option value="Pengumuman">Pengumuman</option>
-                                    <option value="Kegiatan">Kegiatan</option>
-                                    <option value="Prestasi">Prestasi</option>
-                                    <option value="Umum">Umum</option>
-                                </select>
+                                <label for="location" class="form-label">Lokasi <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="location" name="location" value="<?php echo $event['location']; ?>" required>
                             </div>
                             
                             <div class="mb-3">
-                                <label for="author" class="form-label">Penulis</label>
-                                <input type="text" class="form-control" id="author" name="author" value="<?php echo $_SESSION['admin_name']; ?>" required>
+                                <label for="description" class="form-label">Deskripsi Kegiatan <span class="text-danger">*</span></label>
+                                <textarea class="form-control" id="description" name="description" rows="4" required><?php echo $event['description']; ?></textarea>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="requirements" class="form-label">Persyaratan</label>
+                                <textarea class="form-control" id="requirements" name="requirements" rows="3"><?php echo $event['requirements']; ?></textarea>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="contact_info" class="form-label">Informasi Kontak</label>
+                                <textarea class="form-control" id="contact_info" name="contact_info" rows="3"><?php echo $event['contact_info']; ?></textarea>
                             </div>
                             
                             <div class="mb-3">
                                 <label for="image" class="form-label">Gambar</label>
                                 <input type="file" class="form-control" id="image" name="image" accept="image/*">
-                                <div class="form-text">Format yang diperbolehkan: JPEG, JPG, PNG, GIF</div>
-                                <img id="preview" class="preview-image mt-2 rounded" alt="Preview">
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label for="content" class="form-label">Isi Berita</label>
-                                <textarea class="form-control" id="content" name="content" rows="10" required></textarea>
+                                <div class="form-text">Format yang diperbolehkan: JPEG, JPG, PNG, GIF. Kosongkan jika tidak ingin mengubah gambar.</div>
+                                <?php if (!empty($event['image'])): ?>
+                                    <img id="preview" class="preview-image mt-2 rounded" src="../uploads/<?php echo $event['image']; ?>" alt="Preview">
+                                <?php endif; ?>
                             </div>
                             
                             <div class="d-flex justify-content-end">
-                                <a href="posts.php" class="btn btn-secondary me-2">Batal</a>
-                                <button type="submit" class="btn btn-primary">Simpan Berita</button>
+                                <a href="events.php" class="btn btn-secondary me-2">Batal</a>
+                                <button type="submit" class="btn btn-success">Update Kegiatan</button>
                             </div>
                         </form>
                     </div>
@@ -226,8 +287,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
                 
                 reader.readAsDataURL(e.target.files[0]);
-            } else {
-                preview.style.display = 'none';
             }
         });
     </script>

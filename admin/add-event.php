@@ -5,13 +5,17 @@ require_login();
 // Process form submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $title = clean_input($_POST['title']);
-    $content = clean_input($_POST['content']);
-    $category = clean_input($_POST['category']);
-    $author = clean_input($_POST['author']);
+    $description = clean_input($_POST['description']);
+    $event_date = clean_input($_POST['event_date']);
+    $time = clean_input($_POST['time']);
+    $location = clean_input($_POST['location']);
+    $organizer = clean_input($_POST['organizer']);
+    $requirements = clean_input($_POST['requirements']);
+    $contact_info = clean_input($_POST['contact_info']);
     
     // Validate form data
-    if (empty($title) || empty($content) || empty($category) || empty($author)) {
-        $error = "Semua field harus diisi.";
+    if (empty($title) || empty($description) || empty($event_date) || empty($time) || empty($location) || empty($organizer)) {
+        $error = "Field dengan tanda * harus diisi.";
     } else {
         // Handle image upload
         $image = '';
@@ -35,15 +39,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         
         if (!isset($error)) {
-            // Insert post into database
-            $query = "INSERT INTO posts (title, content, category, author, image, created_at) 
-                      VALUES ('$title', '$content', '$category', '$author', '$image', NOW())";
+            // Insert event into database
+            $query = "INSERT INTO events (title, description, event_date, time, location, organizer, requirements, contact_info, image, created_at) 
+                      VALUES ('$title', '$description', '$event_date', '$time', '$location', '$organizer', '$requirements', '$contact_info', '$image', NOW())";
             
             if (mysqli_query($conn, $query)) {
-                $_SESSION['success'] = "Berita berhasil ditambahkan.";
-                redirect('posts.php');
+                $_SESSION['success'] = "Kegiatan berhasil ditambahkan.";
+                redirect('events.php');
             } else {
-                $error = "Terjadi kesalahan. Berita gagal ditambahkan.";
+                $error = "Terjadi kesalahan. Kegiatan gagal ditambahkan.";
             }
         }
     }
@@ -55,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tambah Berita - Admin Panel</title>
+    <title>Tambah Kegiatan - Admin Panel</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -103,12 +107,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             </a>
                         </li>
                         <li>
-                            <a href="posts.php" class="nav-link active">
+                            <a href="posts.php" class="nav-link">
                                 <i class="bi bi-newspaper me-2"></i> Berita
                             </a>
                         </li>
                         <li>
-                            <a href="events.php" class="nav-link">
+                            <a href="events.php" class="nav-link active">
                                 <i class="bi bi-calendar-event me-2"></i> Kegiatan
                             </a>
                         </li>
@@ -146,10 +150,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <!-- Main Content -->
             <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2">Tambah Berita Baru</h1>
+                    <h1 class="h2">Tambah Kegiatan Baru</h1>
                     <div class="btn-toolbar mb-2 mb-md-0">
                         <div class="btn-group me-2">
-                            <a href="posts.php" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Kembali</a>
+                            <a href="events.php" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Kembali</a>
                         </div>
                     </div>
                 </div>
@@ -163,26 +167,55 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 
                 <div class="card shadow-sm">
                     <div class="card-body">
-                        <form action="add-post.php" method="POST" enctype="multipart/form-data">
-                            <div class="mb-3">
-                                <label for="title" class="form-label">Judul Berita</label>
-                                <input type="text" class="form-control" id="title" name="title" required>
+                        <form action="add-event.php" method="POST" enctype="multipart/form-data">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="title" class="form-label">Nama Kegiatan <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="title" name="title" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="organizer" class="form-label">Penanggung Jawab <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="organizer" name="organizer" required>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="event_date" class="form-label">Tanggal Kegiatan <span class="text-danger">*</span></label>
+                                        <input type="date" class="form-control" id="event_date" name="event_date" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="time" class="form-label">Waktu <span class="text-danger">*</span></label>
+                                        <input type="time" class="form-control" id="time" name="time" required>
+                                    </div>
+                                </div>
                             </div>
                             
                             <div class="mb-3">
-                                <label for="category" class="form-label">Kategori</label>
-                                <select class="form-select" id="category" name="category" required>
-                                    <option value="">Pilih Kategori</option>
-                                    <option value="Pengumuman">Pengumuman</option>
-                                    <option value="Kegiatan">Kegiatan</option>
-                                    <option value="Prestasi">Prestasi</option>
-                                    <option value="Umum">Umum</option>
-                                </select>
+                                <label for="location" class="form-label">Lokasi <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="location" name="location" required>
                             </div>
                             
                             <div class="mb-3">
-                                <label for="author" class="form-label">Penulis</label>
-                                <input type="text" class="form-control" id="author" name="author" value="<?php echo $_SESSION['admin_name']; ?>" required>
+                                <label for="description" class="form-label">Deskripsi Kegiatan <span class="text-danger">*</span></label>
+                                <textarea class="form-control" id="description" name="description" rows="4" required></textarea>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="requirements" class="form-label">Persyaratan</label>
+                                <textarea class="form-control" id="requirements" name="requirements" rows="3"></textarea>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="contact_info" class="form-label">Informasi Kontak</label>
+                                <textarea class="form-control" id="contact_info" name="contact_info" rows="3"></textarea>
                             </div>
                             
                             <div class="mb-3">
@@ -192,14 +225,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 <img id="preview" class="preview-image mt-2 rounded" alt="Preview">
                             </div>
                             
-                            <div class="mb-3">
-                                <label for="content" class="form-label">Isi Berita</label>
-                                <textarea class="form-control" id="content" name="content" rows="10" required></textarea>
-                            </div>
-                            
                             <div class="d-flex justify-content-end">
-                                <a href="posts.php" class="btn btn-secondary me-2">Batal</a>
-                                <button type="submit" class="btn btn-primary">Simpan Berita</button>
+                                <a href="events.php" class="btn btn-secondary me-2">Batal</a>
+                                <button type="submit" class="btn btn-success">Simpan Kegiatan</button>
                             </div>
                         </form>
                     </div>

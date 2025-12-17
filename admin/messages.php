@@ -4,31 +4,34 @@ require_login();
 
 // Process delete action
 if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id'])) {
-    $post_id = (int)$_GET['id'];
+    $message_id = (int)$_GET['id'];
     
-    // Get post image
-    $query = "SELECT image FROM posts WHERE id = $post_id";
-    $result = mysqli_query($conn, $query);
+    // Delete message from database
+    $delete_query = "DELETE FROM contacts WHERE id = $message_id";
     
-    if (mysqli_num_rows($result) == 1) {
-        $post = mysqli_fetch_assoc($result);
-        
-        // Delete post from database
-        $delete_query = "DELETE FROM posts WHERE id = $post_id";
-        
-        if (mysqli_query($conn, $delete_query)) {
-            // Delete image file
-            if (!empty($post['image']) && file_exists('../uploads/' . $post['image'])) {
-                unlink('../uploads/' . $post['image']);
-            }
-            
-            $_SESSION['success'] = "Berita berhasil dihapus.";
-        } else {
-            $_SESSION['error'] = "Terjadi kesalahan. Berita gagal dihapus.";
-        }
+    if (mysqli_query($conn, $delete_query)) {
+        $_SESSION['success'] = "Pesan berhasil dihapus.";
+    } else {
+        $_SESSION['error'] = "Terjadi kesalahan. Pesan gagal dihapus.";
     }
     
-    redirect('posts.php');
+    redirect('messages.php');
+}
+
+// Process mark as read action
+if (isset($_GET['action']) && $_GET['action'] == 'mark_read' && isset($_GET['id'])) {
+    $message_id = (int)$_GET['id'];
+    
+    // Update message status
+    $update_query = "UPDATE contacts SET status = 'read' WHERE id = $message_id";
+    
+    if (mysqli_query($conn, $update_query)) {
+        $_SESSION['success'] = "Pesan berhasil ditandai sebagai dibaca.";
+    } else {
+        $_SESSION['error'] = "Terjadi kesalahan. Gagal memperbarui status pesan.";
+    }
+    
+    redirect('messages.php');
 }
 
 // Pagination
@@ -36,14 +39,14 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id']))
  $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
  $offset = ($page - 1) * $limit;
 
-// Get total posts
- $total_query = "SELECT COUNT(*) as total FROM posts";
+// Get total messages
+ $total_query = "SELECT COUNT(*) as total FROM contacts";
  $total_result = mysqli_query($conn, $total_query);
- $total_posts = mysqli_fetch_assoc($total_result)['total'];
- $total_pages = ceil($total_posts / $limit);
+ $total_messages = mysqli_fetch_assoc($total_result)['total'];
+ $total_pages = ceil($total_messages / $limit);
 
-// Get posts
- $query = "SELECT * FROM posts ORDER BY created_at DESC LIMIT $offset, $limit";
+// Get messages
+ $query = "SELECT * FROM contacts ORDER BY created_at DESC LIMIT $offset, $limit";
  $result = mysqli_query($conn, $query);
 ?>
 
@@ -52,7 +55,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id']))
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manajemen Berita - Admin Panel</title>
+    <title>Manajemen Pesan - Admin Panel</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -75,6 +78,10 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id']))
             background-color: #0d6efd;
             color: white;
         }
+        .message-row.unread {
+            background-color: #f8f9fa;
+            font-weight: 500;
+        }
     </style>
 </head>
 <body>
@@ -95,7 +102,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id']))
                             </a>
                         </li>
                         <li>
-                            <a href="posts.php" class="nav-link active">
+                            <a href="posts.php" class="nav-link">
                                 <i class="bi bi-newspaper me-2"></i> Berita
                             </a>
                         </li>
@@ -110,7 +117,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id']))
                             </a>
                         </li>
                         <li>
-                            <a href="messages.php" class="nav-link">
+                            <a href="messages.php" class="nav-link active">
                                 <i class="bi bi-envelope me-2"></i> Pesan
                             </a>
                         </li>
@@ -138,10 +145,12 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id']))
             <!-- Main Content -->
             <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2">Manajemen Berita</h1>
+                    <h1 class="h2">Manajemen Pesan</h1>
                     <div class="btn-toolbar mb-2 mb-md-0">
                         <div class="btn-group me-2">
-                            <a href="add-post.php" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Tambah Berita</a>
+                            <a href="messages.php?action=mark_all_read" class="btn btn-outline-primary" onclick="return confirm('Tandai semua pesan sebagai dibaca?')">
+                                <i class="bi bi-check-all"></i> Tandai Semua Dibaca
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -168,35 +177,35 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id']))
                                     <thead>
                                         <tr>
                                             <th>#</th>
-                                            <th>Gambar</th>
-                                            <th>Judul</th>
-                                            <th>Kategori</th>
-                                            <th>Penulis</th>
+                                            <th>Nama</th>
+                                            <th>Email</th>
+                                            <th>Subjek</th>
                                             <th>Tanggal</th>
+                                            <th>Status</th>
                                             <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php $i = $offset + 1; while ($post = mysqli_fetch_assoc($result)): ?>
-                                            <tr>
+                                        <?php $i = $offset + 1; while ($message = mysqli_fetch_assoc($result)): ?>
+                                            <tr class="<?php echo ($message['status'] == 'unread') ? 'unread' : ''; ?>">
                                                 <td><?php echo $i++; ?></td>
+                                                <td><?php echo $message['name']; ?></td>
+                                                <td><?php echo $message['email']; ?></td>
+                                                <td><?php echo $message['subject']; ?></td>
+                                                <td><?php echo format_datetime($message['created_at']); ?></td>
                                                 <td>
-                                                    <?php if (!empty($post['image'])): ?>
-                                                        <img src="../uploads/<?php echo $post['image']; ?>" alt="<?php echo $post['title']; ?>" width="60" height="60" class="rounded object-fit-cover">
+                                                    <?php if ($message['status'] == 'unread'): ?>
+                                                        <span class="badge bg-danger">Belum Dibaca</span>
                                                     <?php else: ?>
-                                                        <div class="bg-light rounded d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-                                                            <i class="bi bi-image text-muted"></i>
-                                                        </div>
+                                                        <span class="badge bg-success">Dibaca</span>
                                                     <?php endif; ?>
                                                 </td>
-                                                <td><?php echo $post['title']; ?></td>
-                                                <td><span class="badge bg-primary"><?php echo $post['category']; ?></span></td>
-                                                <td><?php echo $post['author']; ?></td>
-                                                <td><?php echo format_date($post['created_at']); ?></td>
                                                 <td>
-                                                    <a href="../blog-detail.php?id=<?php echo $post['id']; ?>" class="btn btn-sm btn-info" target="_blank"><i class="bi bi-eye"></i></a>
-                                                    <a href="edit-post.php?id=<?php echo $post['id']; ?>" class="btn btn-sm btn-primary"><i class="bi bi-pencil"></i></a>
-                                                    <a href="posts.php?action=delete&id=<?php echo $post['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus berita ini?')"><i class="bi bi-trash"></i></a>
+                                                    <a href="view-message.php?id=<?php echo $message['id']; ?>" class="btn btn-sm btn-primary"><i class="bi bi-eye"></i></a>
+                                                    <?php if ($message['status'] == 'unread'): ?>
+                                                        <a href="messages.php?action=mark_read&id=<?php echo $message['id']; ?>" class="btn btn-sm btn-success"><i class="bi bi-check"></i></a>
+                                                    <?php endif; ?>
+                                                    <a href="messages.php?action=delete&id=<?php echo $message['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus pesan ini?')"><i class="bi bi-trash"></i></a>
                                                 </td>
                                             </tr>
                                         <?php endwhile; ?>
@@ -235,8 +244,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id']))
                         <?php else: ?>
                             <div class="text-center py-4">
                                 <i class="bi bi-inbox fs-1 text-muted"></i>
-                                <p class="mt-2">Belum ada berita tersedia.</p>
-                                <a href="add-post.php" class="btn btn-primary">Tambah Berita Baru</a>
+                                <p class="mt-2">Belum ada pesan tersedia.</p>
                             </div>
                         <?php endif; ?>
                     </div>

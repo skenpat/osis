@@ -4,50 +4,36 @@ require_login();
 
 // Process form submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $title = clean_input($_POST['title']);
-    $content = clean_input($_POST['content']);
-    $category = clean_input($_POST['category']);
-    $author = clean_input($_POST['author']);
+    $site_name = clean_input($_POST['site_name']);
+    $admin_email = clean_input($_POST['admin_email']);
     
     // Validate form data
-    if (empty($title) || empty($content) || empty($category) || empty($author)) {
+    if (empty($site_name) || empty($admin_email)) {
         $error = "Semua field harus diisi.";
+    } elseif (!filter_var($admin_email, FILTER_VALIDATE_EMAIL)) {
+        $error = "Format email tidak valid.";
     } else {
-        // Handle image upload
-        $image = '';
-        if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
-            $allowed_types = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
-            $file_type = $_FILES['image']['type'];
-            
-            if (in_array($file_type, $allowed_types)) {
-                $file_name = time() . '_' . $_FILES['image']['name'];
-                $file_tmp = $_FILES['image']['tmp_name'];
-                $upload_dir = '../uploads/';
-                
-                if (move_uploaded_file($file_tmp, $upload_dir . $file_name)) {
-                    $image = $file_name;
-                } else {
-                    $error = "Gagal mengupload gambar.";
-                }
-            } else {
-                $error = "Format gambar tidak valid. Hanya JPEG, JPG, PNG, dan GIF yang diperbolehkan.";
-            }
-        }
+        // Update config file
+        $config_file = '../config.php';
+        $config_content = file_get_contents($config_file);
         
-        if (!isset($error)) {
-            // Insert post into database
-            $query = "INSERT INTO posts (title, content, category, author, image, created_at) 
-                      VALUES ('$title', '$content', '$category', '$author', '$image', NOW())";
-            
-            if (mysqli_query($conn, $query)) {
-                $_SESSION['success'] = "Berita berhasil ditambahkan.";
-                redirect('posts.php');
-            } else {
-                $error = "Terjadi kesalahan. Berita gagal ditambahkan.";
-            }
+        // Replace site name
+        $config_content = preg_replace("/define\('SITE_NAME', '[^']+'\)/", "define('SITE_NAME', '$site_name')", $config_content);
+        
+        // Replace admin email
+        $config_content = preg_replace("/define\('ADMIN_EMAIL', '[^']+'\)/", "define('ADMIN_EMAIL', '$admin_email')", $config_content);
+        
+        if (file_put_contents($config_file, $config_content)) {
+            $_SESSION['success'] = "Pengaturan berhasil diperbarui.";
+        } else {
+            $error = "Terjadi kesalahan. Pengaturan gagal diperbarui.";
         }
     }
 }
+
+// Get current settings
+ $current_site_name = SITE_NAME;
+ $current_admin_email = ADMIN_EMAIL;
 ?>
 
 <!DOCTYPE html>
@@ -55,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tambah Berita - Admin Panel</title>
+    <title>Pengaturan - Admin Panel</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -78,11 +64,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             background-color: #0d6efd;
             color: white;
         }
-        .preview-image {
-            max-width: 100%;
-            max-height: 200px;
-            display: none;
-        }
     </style>
 </head>
 <body>
@@ -103,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             </a>
                         </li>
                         <li>
-                            <a href="posts.php" class="nav-link active">
+                            <a href="posts.php" class="nav-link">
                                 <i class="bi bi-newspaper me-2"></i> Berita
                             </a>
                         </li>
@@ -123,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             </a>
                         </li>
                         <li>
-                            <a href="settings.php" class="nav-link">
+                            <a href="settings.php" class="nav-link active">
                                 <i class="bi bi-gear me-2"></i> Pengaturan
                             </a>
                         </li>
@@ -146,12 +127,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <!-- Main Content -->
             <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2">Tambah Berita Baru</h1>
-                    <div class="btn-toolbar mb-2 mb-md-0">
-                        <div class="btn-group me-2">
-                            <a href="posts.php" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Kembali</a>
-                        </div>
-                    </div>
+                    <h1 class="h2">Pengaturan Sistem</h1>
                 </div>
                 
                 <?php if (isset($error)): ?>
@@ -161,47 +137,72 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     </div>
                 <?php endif; ?>
                 
+                <?php if (isset($_SESSION['success'])): ?>
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <?php echo $_SESSION['success']; unset($_SESSION['success']); ?>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                <?php endif; ?>
+                
                 <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Pengaturan Umum</h5>
+                    </div>
                     <div class="card-body">
-                        <form action="add-post.php" method="POST" enctype="multipart/form-data">
+                        <form action="settings.php" method="POST">
                             <div class="mb-3">
-                                <label for="title" class="form-label">Judul Berita</label>
-                                <input type="text" class="form-control" id="title" name="title" required>
+                                <label for="site_name" class="form-label">Nama Situs</label>
+                                <input type="text" class="form-control" id="site_name" name="site_name" value="<?php echo $current_site_name; ?>" required>
                             </div>
                             
                             <div class="mb-3">
-                                <label for="category" class="form-label">Kategori</label>
-                                <select class="form-select" id="category" name="category" required>
-                                    <option value="">Pilih Kategori</option>
-                                    <option value="Pengumuman">Pengumuman</option>
-                                    <option value="Kegiatan">Kegiatan</option>
-                                    <option value="Prestasi">Prestasi</option>
-                                    <option value="Umum">Umum</option>
-                                </select>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label for="author" class="form-label">Penulis</label>
-                                <input type="text" class="form-control" id="author" name="author" value="<?php echo $_SESSION['admin_name']; ?>" required>
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label for="image" class="form-label">Gambar</label>
-                                <input type="file" class="form-control" id="image" name="image" accept="image/*">
-                                <div class="form-text">Format yang diperbolehkan: JPEG, JPG, PNG, GIF</div>
-                                <img id="preview" class="preview-image mt-2 rounded" alt="Preview">
-                            </div>
-                            
-                            <div class="mb-3">
-                                <label for="content" class="form-label">Isi Berita</label>
-                                <textarea class="form-control" id="content" name="content" rows="10" required></textarea>
+                                <label for="admin_email" class="form-label">Email Admin</label>
+                                <input type="email" class="form-control" id="admin_email" name="admin_email" value="<?php echo $current_admin_email; ?>" required>
                             </div>
                             
                             <div class="d-flex justify-content-end">
-                                <a href="posts.php" class="btn btn-secondary me-2">Batal</a>
-                                <button type="submit" class="btn btn-primary">Simpan Berita</button>
+                                <button type="submit" class="btn btn-primary">Simpan Pengaturan</button>
                             </div>
                         </form>
+                    </div>
+                </div>
+                
+                <div class="card shadow-sm mt-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Informasi Sistem</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Versi PHP:</strong> <?php echo phpversion(); ?></p>
+                                <p><strong>Versi MySQL:</strong> <?php echo mysqli_get_server_info($conn); ?></p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Server Software:</strong> <?php echo $_SERVER['SERVER_SOFTWARE']; ?></p>
+                                <p><strong>Document Root:</strong> <?php echo $_SERVER['DOCUMENT_ROOT']; ?></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card shadow-sm mt-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Admin</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Nama:</strong> <?php echo $_SESSION['admin_name']; ?></p>
+                                <p><strong>Username:</strong> <?php echo $_SESSION['admin_username']; ?></p>
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Login Terakhir:</strong> <?php echo date('d F Y H:i:s'); ?></p>
+                                <p><strong>IP Address:</strong> <?php echo $_SERVER['REMOTE_ADDR']; ?></p>
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <a href="change-password.php" class="btn btn-warning">Ubah Password</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -212,24 +213,5 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Custom JS -->
     <script src="../assets/js/main.js"></script>
-    <script>
-        // Preview image before upload
-        document.getElementById('image').addEventListener('change', function(e) {
-            const preview = document.getElementById('preview');
-            
-            if (e.target.files && e.target.files[0]) {
-                const reader = new FileReader();
-                
-                reader.onload = function(e) {
-                    preview.src = e.target.result;
-                    preview.style.display = 'block';
-                }
-                
-                reader.readAsDataURL(e.target.files[0]);
-            } else {
-                preview.style.display = 'none';
-            }
-        });
-    </script>
 </body>
 </html>

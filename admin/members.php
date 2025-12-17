@@ -4,31 +4,31 @@ require_login();
 
 // Process delete action
 if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id'])) {
-    $post_id = (int)$_GET['id'];
+    $member_id = (int)$_GET['id'];
     
-    // Get post image
-    $query = "SELECT image FROM posts WHERE id = $post_id";
+    // Get member image
+    $query = "SELECT photo FROM members WHERE id = $member_id";
     $result = mysqli_query($conn, $query);
     
     if (mysqli_num_rows($result) == 1) {
-        $post = mysqli_fetch_assoc($result);
+        $member = mysqli_fetch_assoc($result);
         
-        // Delete post from database
-        $delete_query = "DELETE FROM posts WHERE id = $post_id";
+        // Delete member from database
+        $delete_query = "DELETE FROM members WHERE id = $member_id";
         
         if (mysqli_query($conn, $delete_query)) {
-            // Delete image file
-            if (!empty($post['image']) && file_exists('../uploads/' . $post['image'])) {
-                unlink('../uploads/' . $post['image']);
+            // Delete photo file
+            if (!empty($member['photo']) && file_exists('../uploads/' . $member['photo'])) {
+                unlink('../uploads/' . $member['photo']);
             }
             
-            $_SESSION['success'] = "Berita berhasil dihapus.";
+            $_SESSION['success'] = "Anggota berhasil dihapus.";
         } else {
-            $_SESSION['error'] = "Terjadi kesalahan. Berita gagal dihapus.";
+            $_SESSION['error'] = "Terjadi kesalahan. Anggota gagal dihapus.";
         }
     }
     
-    redirect('posts.php');
+    redirect('members.php');
 }
 
 // Pagination
@@ -36,14 +36,14 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id']))
  $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
  $offset = ($page - 1) * $limit;
 
-// Get total posts
- $total_query = "SELECT COUNT(*) as total FROM posts";
+// Get total members
+ $total_query = "SELECT COUNT(*) as total FROM members";
  $total_result = mysqli_query($conn, $total_query);
- $total_posts = mysqli_fetch_assoc($total_result)['total'];
- $total_pages = ceil($total_posts / $limit);
+ $total_members = mysqli_fetch_assoc($total_result)['total'];
+ $total_pages = ceil($total_members / $limit);
 
-// Get posts
- $query = "SELECT * FROM posts ORDER BY created_at DESC LIMIT $offset, $limit";
+// Get members
+ $query = "SELECT * FROM members ORDER BY name ASC LIMIT $offset, $limit";
  $result = mysqli_query($conn, $query);
 ?>
 
@@ -52,7 +52,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id']))
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manajemen Berita - Admin Panel</title>
+    <title>Manajemen Anggota - Admin Panel</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -95,7 +95,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id']))
                             </a>
                         </li>
                         <li>
-                            <a href="posts.php" class="nav-link active">
+                            <a href="posts.php" class="nav-link">
                                 <i class="bi bi-newspaper me-2"></i> Berita
                             </a>
                         </li>
@@ -105,7 +105,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id']))
                             </a>
                         </li>
                         <li>
-                            <a href="members.php" class="nav-link">
+                            <a href="members.php" class="nav-link active">
                                 <i class="bi bi-people me-2"></i> Anggota
                             </a>
                         </li>
@@ -138,10 +138,10 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id']))
             <!-- Main Content -->
             <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2">Manajemen Berita</h1>
+                    <h1 class="h2">Manajemen Anggota</h1>
                     <div class="btn-toolbar mb-2 mb-md-0">
                         <div class="btn-group me-2">
-                            <a href="add-post.php" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Tambah Berita</a>
+                            <a href="add-member.php" class="btn btn-warning"><i class="bi bi-plus-circle"></i> Tambah Anggota</a>
                         </div>
                     </div>
                 </div>
@@ -168,35 +168,40 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id']))
                                     <thead>
                                         <tr>
                                             <th>#</th>
-                                            <th>Gambar</th>
-                                            <th>Judul</th>
-                                            <th>Kategori</th>
-                                            <th>Penulis</th>
-                                            <th>Tanggal</th>
+                                            <th>Foto</th>
+                                            <th>Nama</th>
+                                            <th>Jabatan</th>
+                                            <th>Kelas</th>
+                                            <th>Status</th>
                                             <th>Aksi</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php $i = $offset + 1; while ($post = mysqli_fetch_assoc($result)): ?>
+                                        <?php $i = $offset + 1; while ($member = mysqli_fetch_assoc($result)): ?>
                                             <tr>
                                                 <td><?php echo $i++; ?></td>
                                                 <td>
-                                                    <?php if (!empty($post['image'])): ?>
-                                                        <img src="../uploads/<?php echo $post['image']; ?>" alt="<?php echo $post['title']; ?>" width="60" height="60" class="rounded object-fit-cover">
+                                                    <?php if (!empty($member['photo'])): ?>
+                                                        <img src="../uploads/<?php echo $member['photo']; ?>" alt="<?php echo $member['name']; ?>" width="50" height="50" class="rounded-circle object-fit-cover">
                                                     <?php else: ?>
-                                                        <div class="bg-light rounded d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-                                                            <i class="bi bi-image text-muted"></i>
+                                                        <div class="bg-light rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                                            <i class="bi bi-person text-muted"></i>
                                                         </div>
                                                     <?php endif; ?>
                                                 </td>
-                                                <td><?php echo $post['title']; ?></td>
-                                                <td><span class="badge bg-primary"><?php echo $post['category']; ?></span></td>
-                                                <td><?php echo $post['author']; ?></td>
-                                                <td><?php echo format_date($post['created_at']); ?></td>
+                                                <td><?php echo $member['name']; ?></td>
+                                                <td><?php echo $member['position']; ?></td>
+                                                <td><?php echo $member['class']; ?></td>
                                                 <td>
-                                                    <a href="../blog-detail.php?id=<?php echo $post['id']; ?>" class="btn btn-sm btn-info" target="_blank"><i class="bi bi-eye"></i></a>
-                                                    <a href="edit-post.php?id=<?php echo $post['id']; ?>" class="btn btn-sm btn-primary"><i class="bi bi-pencil"></i></a>
-                                                    <a href="posts.php?action=delete&id=<?php echo $post['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus berita ini?')"><i class="bi bi-trash"></i></a>
+                                                    <?php if ($member['status'] == 'active'): ?>
+                                                        <span class="badge bg-success">Aktif</span>
+                                                    <?php else: ?>
+                                                        <span class="badge bg-secondary">Tidak Aktif</span>
+                                                    <?php endif; ?>
+                                                </td>
+                                                <td>
+                                                    <a href="edit-member.php?id=<?php echo $member['id']; ?>" class="btn btn-sm btn-primary"><i class="bi bi-pencil"></i></a>
+                                                    <a href="members.php?action=delete&id=<?php echo $member['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus anggota ini?')"><i class="bi bi-trash"></i></a>
                                                 </td>
                                             </tr>
                                         <?php endwhile; ?>
@@ -234,9 +239,9 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id']))
                             <?php endif; ?>
                         <?php else: ?>
                             <div class="text-center py-4">
-                                <i class="bi bi-inbox fs-1 text-muted"></i>
-                                <p class="mt-2">Belum ada berita tersedia.</p>
-                                <a href="add-post.php" class="btn btn-primary">Tambah Berita Baru</a>
+                                <i class="bi bi-people fs-1 text-muted"></i>
+                                <p class="mt-2">Belum ada anggota tersedia.</p>
+                                <a href="add-member.php" class="btn btn-warning">Tambah Anggota Baru</a>
                             </div>
                         <?php endif; ?>
                     </div>

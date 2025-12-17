@@ -2,19 +2,37 @@
 require_once '../config.php';
 require_login();
 
+// Get post ID
+if (!isset($_GET['id']) || empty($_GET['id'])) {
+    redirect('posts.php');
+}
+
+ $post_id = (int)$_GET['id'];
+
+// Get post data
+ $query = "SELECT * FROM posts WHERE id = $post_id";
+ $result = mysqli_query($conn, $query);
+
+if (mysqli_num_rows($result) == 0) {
+    redirect('posts.php');
+}
+
+ $post = mysqli_fetch_assoc($result);
+
 // Process form submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $title = clean_input($_POST['title']);
     $content = clean_input($_POST['content']);
     $category = clean_input($_POST['category']);
     $author = clean_input($_POST['author']);
+    $current_image = $post['image'];
     
     // Validate form data
     if (empty($title) || empty($content) || empty($category) || empty($author)) {
         $error = "Semua field harus diisi.";
     } else {
         // Handle image upload
-        $image = '';
+        $image = $current_image;
         if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
             $allowed_types = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
             $file_type = $_FILES['image']['type'];
@@ -25,6 +43,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $upload_dir = '../uploads/';
                 
                 if (move_uploaded_file($file_tmp, $upload_dir . $file_name)) {
+                    // Delete old image if exists
+                    if (!empty($current_image) && file_exists($upload_dir . $current_image)) {
+                        unlink($upload_dir . $current_image);
+                    }
+                    
                     $image = $file_name;
                 } else {
                     $error = "Gagal mengupload gambar.";
@@ -35,15 +58,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
         
         if (!isset($error)) {
-            // Insert post into database
-            $query = "INSERT INTO posts (title, content, category, author, image, created_at) 
-                      VALUES ('$title', '$content', '$category', '$author', '$image', NOW())";
+            // Update post in database
+            $query = "UPDATE posts SET 
+                      title = '$title', 
+                      content = '$content', 
+                      category = '$category', 
+                      author = '$author', 
+                      image = '$image' 
+                      WHERE id = $post_id";
             
             if (mysqli_query($conn, $query)) {
-                $_SESSION['success'] = "Berita berhasil ditambahkan.";
+                $_SESSION['success'] = "Berita berhasil diperbarui.";
                 redirect('posts.php');
             } else {
-                $error = "Terjadi kesalahan. Berita gagal ditambahkan.";
+                $error = "Terjadi kesalahan. Berita gagal diperbarui.";
             }
         }
     }
@@ -55,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tambah Berita - Admin Panel</title>
+    <title>Edit Berita - Admin Panel</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -81,7 +109,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         .preview-image {
             max-width: 100%;
             max-height: 200px;
-            display: none;
         }
     </style>
 </head>
@@ -146,7 +173,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <!-- Main Content -->
             <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2">Tambah Berita Baru</h1>
+                    <h1 class="h2">Edit Berita</h1>
                     <div class="btn-toolbar mb-2 mb-md-0">
                         <div class="btn-group me-2">
                             <a href="posts.php" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Kembali</a>
@@ -163,43 +190,45 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 
                 <div class="card shadow-sm">
                     <div class="card-body">
-                        <form action="add-post.php" method="POST" enctype="multipart/form-data">
+                        <form action="edit-post.php?id=<?php echo $post_id; ?>" method="POST" enctype="multipart/form-data">
                             <div class="mb-3">
                                 <label for="title" class="form-label">Judul Berita</label>
-                                <input type="text" class="form-control" id="title" name="title" required>
+                                <input type="text" class="form-control" id="title" name="title" value="<?php echo $post['title']; ?>" required>
                             </div>
                             
                             <div class="mb-3">
                                 <label for="category" class="form-label">Kategori</label>
                                 <select class="form-select" id="category" name="category" required>
                                     <option value="">Pilih Kategori</option>
-                                    <option value="Pengumuman">Pengumuman</option>
-                                    <option value="Kegiatan">Kegiatan</option>
-                                    <option value="Prestasi">Prestasi</option>
-                                    <option value="Umum">Umum</option>
+                                    <option value="Pengumuman" <?php echo ($post['category'] == 'Pengumuman') ? 'selected' : ''; ?>>Pengumuman</option>
+                                    <option value="Kegiatan" <?php echo ($post['category'] == 'Kegiatan') ? 'selected' : ''; ?>>Kegiatan</option>
+                                    <option value="Prestasi" <?php echo ($post['category'] == 'Prestasi') ? 'selected' : ''; ?>>Prestasi</option>
+                                    <option value="Umum" <?php echo ($post['category'] == 'Umum') ? 'selected' : ''; ?>>Umum</option>
                                 </select>
                             </div>
                             
                             <div class="mb-3">
                                 <label for="author" class="form-label">Penulis</label>
-                                <input type="text" class="form-control" id="author" name="author" value="<?php echo $_SESSION['admin_name']; ?>" required>
+                                <input type="text" class="form-control" id="author" name="author" value="<?php echo $post['author']; ?>" required>
                             </div>
                             
                             <div class="mb-3">
                                 <label for="image" class="form-label">Gambar</label>
                                 <input type="file" class="form-control" id="image" name="image" accept="image/*">
-                                <div class="form-text">Format yang diperbolehkan: JPEG, JPG, PNG, GIF</div>
-                                <img id="preview" class="preview-image mt-2 rounded" alt="Preview">
+                                <div class="form-text">Format yang diperbolehkan: JPEG, JPG, PNG, GIF. Kosongkan jika tidak ingin mengubah gambar.</div>
+                                <?php if (!empty($post['image'])): ?>
+                                    <img id="preview" class="preview-image mt-2 rounded" src="../uploads/<?php echo $post['image']; ?>" alt="Preview">
+                                <?php endif; ?>
                             </div>
                             
                             <div class="mb-3">
                                 <label for="content" class="form-label">Isi Berita</label>
-                                <textarea class="form-control" id="content" name="content" rows="10" required></textarea>
+                                <textarea class="form-control" id="content" name="content" rows="10" required><?php echo $post['content']; ?></textarea>
                             </div>
                             
                             <div class="d-flex justify-content-end">
                                 <a href="posts.php" class="btn btn-secondary me-2">Batal</a>
-                                <button type="submit" class="btn btn-primary">Simpan Berita</button>
+                                <button type="submit" class="btn btn-primary">Update Berita</button>
                             </div>
                         </form>
                     </div>
@@ -226,8 +255,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
                 
                 reader.readAsDataURL(e.target.files[0]);
-            } else {
-                preview.style.display = 'none';
             }
         });
     </script>
