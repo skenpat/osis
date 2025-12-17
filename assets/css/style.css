@@ -1,14 +1,16 @@
 /* CSS Custom Properties (Variables) for Design System */
 :root {
     /* Color Palette */
-    --primary: #0d6efd;
-    --primary-dark: #0b5ed7;
-    --primary-light: #6ea8fe;
-    --secondary: #6c757d;
-    --success: #198754;
-    --info: #0dcaf0;
-    --warning: #ffc107;
-    --danger: #dc3545;
+    --primary: #FF4000;
+    --primary-light: #FF6A33;
+    /* lighter tint */
+    --primary-dark: #CC3300;
+    /* darker shade */
+    --secondary: #f59e0b;
+    --success: #10b981;
+    --danger: #ef4444;
+    --warning: #f59e0b;
+    --info: #06b6d4;
     --light: #f8f9fa;
     --dark: #212529;
 
