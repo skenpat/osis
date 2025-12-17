@@ -17,10 +17,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
         // Check admin credentials
         $query = "SELECT * FROM admins WHERE username = '$username'";
-        $result = mysqli_query($conn, $query);
+        $result = $conn->query($query);
         
-        if (mysqli_num_rows($result) == 1) {
-            $admin = mysqli_fetch_assoc($result);
+        if ($result->num_rows == 1) {
+            $admin = $result->fetch_assoc();
             
             // Verify password
             if (password_verify($password, $admin['password'])) {
