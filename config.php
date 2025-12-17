@@ -24,7 +24,7 @@ try {
 
 // Site Configuration
 define('SITE_URL', 'http://localhost/osis-project');
-define('SITE_NAME', 'OSIS SMA Negeri 1');
+define('SITE_NAME', 'OSIS SMK Negeri 4 Banjarmasin');
 define('ADMIN_EMAIL', 'admin@osis.sman1.sch.id');
 
 // Start session

@@ -192,11 +192,11 @@
             <div class="row">
                 <div class="col-md-6">
                     <h5><?php echo SITE_NAME; ?></h5>
-                    <p>Organisasi Siswa Intra Sekolah SMA Negeri 1</p>
+                    <p>Organisasi Siswa Intra Sekolah SMK Negeri 4 Banjarmasin</p>
                 </div>
                 <div class="col-md-6 text-md-end">
                     <p>&copy; <?php echo date('Y'); ?> <?php echo SITE_NAME; ?>. All rights reserved.</p>
-                    <p>Developed by OSIS IT Team</p>
+                    <p>Developed by <a href="https://github.com/orgs/skenpat/people">skenpat-people</a></p>
                 </div>
             </div>
         </div>

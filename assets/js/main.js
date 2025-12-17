@@ -1,79 +1,184 @@
-// Smooth scrolling for anchor links
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
+/**
+ * Main Application Script
+ * Handles various UI interactions and functionality
+ */
 
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            window.scrollTo({
-                top: target.offsetTop - 70,
-                behavior: 'smooth'
+// Wait for DOM to be fully loaded before executing
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize all UI components
+    initializeSmoothScrolling();
+    initializeAlerts();
+    initializeFormValidation();
+    initializeDeleteConfirmations();
+    initializeTooltips();
+    initializePopovers();
+    initializePasswordToggles();
+    initializeFileUploadPreviews();
+    initializeClipboardCopy();
+    initializeActiveNavigation();
+});
+
+/**
+ * Smooth scrolling for anchor links
+ */
+function initializeSmoothScrolling() {
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+
+            const targetId = this.getAttribute('href');
+            // Skip if it's just "#"
+            if (targetId === '#') return;
+
+            const target = document.querySelector(targetId);
+            if (target) {
+                const headerOffset = 70;
+                const elementPosition = target.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: 'smooth'
+                });
+            }
+        });
+    });
+}
+
+/**
+ * Auto-hide alerts after 5 seconds
+ */
+function initializeAlerts() {
+    const alerts = document.querySelectorAll('.alert:not([data-permanent])');
+
+    alerts.forEach(alert => {
+        // Set a timeout to close the alert
+        const timeoutId = setTimeout(() => {
+            closeAlert(alert);
+        }, 5000);
+
+        // Allow manual dismissal by clicking the close button
+        const closeButton = alert.querySelector('.btn-close');
+        if (closeButton) {
+            closeButton.addEventListener('click', () => {
+                clearTimeout(timeoutId);
+                closeAlert(alert);
             });
         }
     });
-});
+}
 
-// Auto-hide alerts after 5 seconds
-document.addEventListener('DOMContentLoaded', function () {
-    const alerts = document.querySelectorAll('.alert');
+/**
+ * Close an alert element with animation
+ * @param {HTMLElement} alert - The alert element to close
+ */
+function closeAlert(alert) {
+    alert.style.opacity = '0';
+    alert.style.transition = 'opacity 0.5s ease';
 
-    alerts.forEach(function (alert) {
-        setTimeout(function () {
-            const bsAlert = new bootstrap.Alert(alert);
-            bsAlert.close();
-        }, 5000);
-    });
-});
+    setTimeout(() => {
+        if (alert.parentNode) {
+            alert.parentNode.removeChild(alert);
+        }
+    }, 500);
+}
 
-// Form validation
-document.addEventListener('DOMContentLoaded', function () {
+/**
+ * Form validation
+ */
+function initializeFormValidation() {
     const forms = document.querySelectorAll('.needs-validation');
 
-    forms.forEach(function (form) {
-        form.addEventListener('submit', function (event) {
+    forms.forEach(form => {
+        form.addEventListener('submit', event => {
             if (!form.checkValidity()) {
                 event.preventDefault();
                 event.stopPropagation();
+
+                // Focus on the first invalid field
+                const firstInvalid = form.querySelector(':invalid');
+                if (firstInvalid) {
+                    firstInvalid.focus();
+                }
             }
 
             form.classList.add('was-validated');
         }, false);
-    });
-});
 
-// Confirm delete actions
-document.querySelectorAll('[data-confirm]').forEach(element => {
-    element.addEventListener('click', function (event) {
-        if (!confirm(this.getAttribute('data-confirm'))) {
-            event.preventDefault();
-        }
+        // Real-time validation feedback
+        const inputs = form.querySelectorAll('input, select, textarea');
+        inputs.forEach(input => {
+            input.addEventListener('blur', () => {
+                if (input.hasAttribute('required') && !input.value.trim()) {
+                    input.classList.add('is-invalid');
+                } else {
+                    input.classList.remove('is-invalid');
+                }
+            });
+        });
     });
-});
+}
 
-// Initialize tooltips
-document.addEventListener('DOMContentLoaded', function () {
+/**
+ * Confirm delete actions
+ */
+function initializeDeleteConfirmations() {
+    document.querySelectorAll('[data-confirm]').forEach(element => {
+        element.addEventListener('click', event => {
+            const message = element.getAttribute('data-confirm') || 'Are you sure you want to delete this item?';
+
+            // Create a custom confirmation modal instead of using browser's confirm
+            if (!showConfirmationDialog(message)) {
+                event.preventDefault();
+            }
+        });
+    });
+}
+
+/**
+ * Show a custom confirmation dialog
+ * @param {string} message - The confirmation message
+ * @returns {boolean} - True if confirmed, false otherwise
+ */
+function showConfirmationDialog(message) {
+    // For simplicity, we're using the browser's confirm, but you could replace this with a modal
+    return confirm(message);
+}
+
+/**
+ * Initialize Bootstrap tooltips
+ */
+function initializeTooltips() {
     const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-    const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl);
+    tooltipTriggerList.forEach(tooltipTriggerEl => {
+        new bootstrap.Tooltip(tooltipTriggerEl, {
+            delay: { show: 500, hide: 100 }
+        });
     });
-});
+}
 
-// Initialize popovers
-document.addEventListener('DOMContentLoaded', function () {
+/**
+ * Initialize Bootstrap popovers
+ */
+function initializePopovers() {
     const popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
-    const popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
-        return new bootstrap.Popover(popoverTriggerEl);
+    popoverTriggerList.forEach(popoverTriggerEl => {
+        new bootstrap.Popover(popoverTriggerEl, {
+            trigger: 'focus'
+        });
     });
-});
+}
 
-// Toggle password visibility
-document.addEventListener('DOMContentLoaded', function () {
-    const togglePasswordButtons = document.querySelectorAll('.toggle-password');
-
-    togglePasswordButtons.forEach(button => {
+/**
+ * Toggle password visibility
+ */
+function initializePasswordToggles() {
+    document.querySelectorAll('.toggle-password').forEach(button => {
         button.addEventListener('click', function () {
             const input = document.querySelector(this.getAttribute('data-target'));
             const icon = this.querySelector('i');
+
+            if (!input) return;
 
             if (input.type === 'password') {
                 input.type = 'text';
@@ -82,19 +187,22 @@ document.addEventListener('DOMContentLoaded', function () {
             } else {
                 input.type = 'password';
                 icon.classList.remove('bi-eye-slash');
-                icon.classList.add('bi');
+                icon.classList.add('bi-eye');
             }
         });
     });
-});
+}
 
-// File upload preview
-document.addEventListener('DOMContentLoaded', function () {
-    const fileInputs = document.querySelectorAll('input[type="file"][data-preview]');
-
-    fileInputs.forEach(input => {
+/**
+ * File upload preview
+ */
+function initializeFileUploadPreviews() {
+    document.querySelectorAll('input[type="file"][data-preview]').forEach(input => {
         input.addEventListener('change', function () {
-            const preview = document.querySelector(this.getAttribute('data-preview'));
+            const previewId = this.getAttribute('data-preview');
+            const preview = document.querySelector(previewId);
+
+            if (!preview) return;
 
             if (this.files && this.files[0]) {
                 const reader = new FileReader();
@@ -102,7 +210,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 reader.onload = function (e) {
                     preview.src = e.target.result;
                     preview.style.display = 'block';
-                }
+                };
+
+                reader.onerror = function () {
+                    console.error('Error reading file');
+                    preview.style.display = 'none';
+                };
 
                 reader.readAsDataURL(this.files[0]);
             } else {
@@ -110,38 +223,127 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
-});
+}
 
-// Copy to clipboard
-document.addEventListener('DOMContentLoaded', function () {
-    const copyButtons = document.querySelectorAll('.copy-to-clipboard');
+/**
+ * Copy to clipboard functionality
+ */
+function initializeClipboardCopy() {
+    document.querySelectorAll('.copy-to-clipboard').forEach(button => {
+        button.addEventListener('click', async function () {
+            const text = this.getAttribute('data-text') ||
+                this.getAttribute('href') ||
+                this.textContent.trim();
 
-    copyButtons.forEach(button => {
-        button.addEventListener('click', function () {
-            const text = this.getAttribute('data-text');
+            try {
+                await navigator.clipboard.writeText(text);
 
-            navigator.clipboard.writeText(text).then(function () {
-                const originalText = button.innerHTML;
-                button.innerHTML = '<i class="bi bi-check"></i> Copied!';
+                // Show success feedback
+                const originalHTML = this.innerHTML;
+                this.innerHTML = '<i class="bi bi-check"></i> Copied!';
+                this.disabled = true;
 
-                setTimeout(function () {
-                    button.innerHTML = originalText;
+                setTimeout(() => {
+                    this.innerHTML = originalHTML;
+                    this.disabled = false;
                 }, 2000);
-            }).catch(function (err) {
+            } catch (err) {
                 console.error('Failed to copy: ', err);
-            });
+
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+
+                // Show feedback
+                const originalHTML = this.innerHTML;
+                this.innerHTML = '<i class="bi bi-check"></i> Copied!';
+                this.disabled = true;
+
+                setTimeout(() => {
+                    this.innerHTML = originalHTML;
+                    this.disabled = false;
+                }, 2000);
+            }
         });
     });
-});
+}
 
-// Active navigation highlighting
-document.addEventListener('DOMContentLoaded', function () {
-    const currentLocation = location.pathname;
-    const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
+/**
+ * Active navigation highlighting
+ */
+function initializeActiveNavigation() {
+    const currentPath = window.location.pathname;
+    const navLinks = document.querySelectorAll('.navbar-nav .nav-link, .sidebar .nav-link');
 
     navLinks.forEach(link => {
-        if (link.getAttribute('href') === currentLocation) {
+        const href = link.getAttribute('href');
+
+        // Check if the link href matches the current path
+        if (href === currentPath) {
+            link.classList.add('active');
+        }
+        // Check for partial matches (useful for dynamic URLs)
+        else if (href !== '/' && href !== '#' && currentPath.startsWith(href)) {
             link.classList.add('active');
         }
     });
-});
+}
+
+/**
+ * Debounce function to limit how often a function can be called
+ * @param {Function} func - The function to debounce
+ * @param {number} wait - The debounce time in milliseconds
+ * @returns {Function} - The debounced function
+ */
+function debounce(func, wait) {
+    let timeout;
+    return function (...args) {
+        const context = this;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(context, args), wait);
+    };
+}
+
+/**
+ * Throttle function to limit how often a function can be called
+ * @param {Function} func - The function to throttle
+ * @param {number} limit - The throttle time in milliseconds
+ * @returns {Function} - The throttled function
+ */
+function throttle(func, limit) {
+    let inThrottle;
+    return function (...args) {
+        const context = this;
+        if (!inThrottle) {
+            func.apply(context, args);
+            inThrottle = true;
+            setTimeout(() => inThrottle = false, limit);
+        }
+    };
+}
+
+// Add window resize event listener with debounce for responsive adjustments
+window.addEventListener('resize', debounce(() => {
+    // Handle responsive adjustments here
+    console.log('Window resized');
+}, 250));
+
+// Add scroll event listener with throttle for scroll-based effects
+window.addEventListener('scroll', throttle(() => {
+    // Handle scroll-based effects here
+    const scrollPosition = window.scrollY;
+
+    // Example: Add shadow to header when scrolling
+    const header = document.querySelector('header');
+    if (header) {
+        if (scrollPosition > 50) {
+            header.classList.add('shadow-sm');
+        } else {
+            header.classList.remove('shadow-sm');
+        }
+    }
+}, 100));
