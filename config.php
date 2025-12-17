@@ -1,17 +1,25 @@
 <?php
 // Database Configuration
 define('DB_HOST', 'db.fr-pari1.bengt.wasmernet.com');
-define('DB_PORT', '10272');
+define('DB_PORT', 10272);
 define('DB_NAME', 'dbE2UwDvxp5kGjWbgS36cCDe');
 define('DB_USER', '218212fb78408000caa68efa941e');
 define('DB_PASS', '06942182-12fb-7b70-8000-ec49bfef5d57');
 
-// Create connection
- $conn = mysqli_connect(DB_HOST, DB_USER, DB_PASS, DB_NAME, DB_PORT);
+// Error reporting
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
-// Check connection
-if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
+// Create connection
+try {
+    $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME, DB_PORT);
+    
+    // Check connection
+    if ($conn->connect_error) {
+        throw new Exception("Connection failed: " . $conn->connect_error);
+    }
+} catch (Exception $e) {
+    die("Database Connection Error: " . $e->getMessage());
 }
 
 // Site Configuration
