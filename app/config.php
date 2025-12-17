@@ -3,7 +3,7 @@
 define('DB_HOST', 'localhost');
 define('DB_USER', 'root');
 define('DB_PASS', '');
-define('DB_NAME', 'osis_db');
+define('DB_NAME', 'dbE2UwDvxp5kGjWbgS36cCDe');
 
 // Koneksi Database
  $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
