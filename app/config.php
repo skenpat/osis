@@ -1,8 +1,8 @@
 <?php
 // config.php - Konfigurasi Database
-define('DB_HOST', 'localhost');
-define('DB_USER', 'root');
-define('DB_PASS', '');
+define('DB_HOST', 'db.fr-pari1.bengt.wasmernet.com');
+define('DB_USER', '218212fb78408000caa68efa941e');
+define('DB_PASS', '06942182-12fb-7b70-8000-ec49bfef5d57');
 define('DB_NAME', 'dbE2UwDvxp5kGjWbgS36cCDe');
 
 // Koneksi Database
