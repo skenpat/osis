@@ -57,7 +57,7 @@ function is_logged_in() {
 
 function require_login() {
     if (!is_logged_in()) {
-        redirect('admin/login.php');
+        redirect('/admin/login.php');
     }
 }
 
