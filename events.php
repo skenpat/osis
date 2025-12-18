@@ -40,7 +40,7 @@
                         <a class="nav-link" href="contact.php">Kontak</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="admin/login.php"><i class="bi bi-lock-fill"></i> Admin</a>
+                        <div class="dark-mode-toggle ms-2"></div>
                     </li>
                 </ul>
             </div>
@@ -58,6 +58,26 @@
     <!-- Events Content -->
     <section class="py-5">
         <div class="container">
+            <!-- Search and Filter -->
+            <div class="row mb-4">
+                <div class="col-lg-8 mb-3">
+                    <div class="search-box">
+                        <button type="button"><i class="bi bi-search"></i></button>
+                        <input type="text" class="form-control" placeholder="Cari kegiatan...">
+                    </div>
+                </div>
+                <div class="col-lg-4 mb-3">
+                    <select class="form-select" id="eventCategoryFilter">
+                        <option value="all">Semua Kategori</option>
+                        <option value="pendidikan">Pendidikan</option>
+                        <option value="sosial">Sosial</option>
+                        <option value="olahraga">Olahraga</option>
+                        <option value="seni">Seni</option>
+                        <option value="lainnya">Lainnya</option>
+                    </select>
+                </div>
+            </div>
+            
             <!-- Event Filter -->
             <div class="row mb-4">
                 <div class="col-12">
@@ -84,7 +104,7 @@
                         
                         if (mysqli_num_rows($result) > 0) {
                             while ($row = mysqli_fetch_assoc($result)) {
-                                echo '<div class="col-lg-4 mb-4">';
+                                echo '<div class="col-lg-4 mb-4 filterable-item" data-category="' . $row['category'] . '">';
                                 echo '<div class="card h-100 shadow-sm">';
                                 echo '<div class="card-header bg-primary text-white">';
                                 echo '<h5 class="card-title mb-0">' . $row['title'] . '</h5>';
@@ -120,7 +140,7 @@
                         
                         if (mysqli_num_rows($result) > 0) {
                             while ($row = mysqli_fetch_assoc($result)) {
-                                echo '<div class="col-lg-4 mb-4">';
+                                echo '<div class="col-lg-4 mb-4 filterable-item" data-category="' . $row['category'] . '">';
                                 echo '<div class="card h-100 shadow-sm">';
                                 echo '<div class="card-header bg-secondary text-white">';
                                 echo '<h5 class="card-title mb-0">' . $row['title'] . '</h5>';
@@ -158,13 +178,8 @@
                     <div class="underline mx-auto"></div>
                 </div>
                 <div class="col-lg-8 mx-auto">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <!-- Calendar Placeholder -->
-                            <div id="calendar" class="calendar-container">
-                                <p class="text-center">Kalender kegiatan akan segera tersedia.</p>
-                            </div>
-                        </div>
+                    <div class="calendar-container">
+                        <div id="calendar"></div>
                     </div>
                 </div>
             </div>
@@ -186,6 +201,37 @@
             </div>
         </div>
     </footer>
+
+    <!-- Back to Top Button -->
+    <div class="back-to-top">
+        <i class="bi bi-arrow-up"></i>
+    </div>
+
+    <!-- Overlay -->
+    <div class="overlay"></div>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu">
+        <div class="mobile-menu-header">
+            <h4><?php echo SITE_NAME; ?></h4>
+            <button class="mobile-menu-close"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <div class="mobile-menu-body">
+            <ul class="mobile-menu-nav">
+                <li><a href="index.php">Beranda</a></li>
+                <li><a href="about.php">Tentang</a></li>
+                <li><a href="blog.php">Berita</a></li>
+                <li><a href="events.php" class="active">Kegiatan</a></li>
+                <li><a href="contact.php">Kontak</a></li>
+            </ul>
+        </div>
+        <div class="mobile-menu-footer">
+            <div class="dark-mode-toggle mx-auto"></div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container"></div>
 
     <!-- Bootstrap JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
