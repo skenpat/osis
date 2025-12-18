@@ -1,10 +1,10 @@
 <?php
 // Database Configuration
-define('DB_HOST', 'db.fr-pari1.bengt.wasmernet.com');
+define('DB_HOST', getenv('DB_HOST'));
 define('DB_PORT', 10272);
-define('DB_NAME', 'dbE2UwDvxp5kGjWbgS36cCDe');
-define('DB_USER', '218212fb78408000caa68efa941e');
-define('DB_PASS', '06942182-12fb-7b70-8000-ec49bfef5d57');
+define('DB_NAME', getenv('DB_NAME'));
+define('DB_USER', getenv('DB_USER'));
+define('DB_PASS', getenv('DB_PASS'));
 
 // Error reporting
 error_reporting(E_ALL);
