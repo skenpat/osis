@@ -108,7 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         </li>
                         <li>
                             <a href="posts.php" class="nav-link">
-                                <i class="bi bi-newspaper me-2"></i> Berita
+                                <i class="bi bi-newspaper me-2"></i> Artikel
                             </a>
                         </li>
                         <li>

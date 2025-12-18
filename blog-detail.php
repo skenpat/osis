@@ -50,7 +50,7 @@ if (mysqli_num_rows($result) == 0) {
                         <a class="nav-link" href="about.php">Tentang</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="blog.php">Berita</a>
+                        <a class="nav-link" href="blog.php">Artikel</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="events.php">Kegiatan</a>
@@ -86,7 +86,7 @@ if (mysqli_num_rows($result) == 0) {
                         </div>
                         <div class="card-footer">
                             <div class="d-flex justify-content-between">
-                                <a href="blog.php" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i> Kembali ke Berita</a>
+                                <a href="blog.php" class="btn btn-outline-primary"><i class="bi bi-arrow-left"></i> Kembali ke Artikel</a>
                                 <div>
                                     <a href="#" class="btn btn-sm btn-outline-secondary"><i class="bi bi-facebook"></i></a>
                                     <a href="#" class="btn btn-sm btn-outline-secondary"><i class="bi bi-twitter"></i></a>
@@ -98,7 +98,7 @@ if (mysqli_num_rows($result) == 0) {
                     
                     <!-- Related Posts -->
                     <div class="mt-5">
-                        <h3 class="mb-4">Berita Terkait</h3>
+                        <h3 class="mb-4">Artikel Terkait</h3>
                         <div class="row">
                             <?php
                             $query_related = "SELECT * FROM posts WHERE id != $post_id AND category = '" . $post['category'] . "' ORDER BY created_at DESC LIMIT 3";
@@ -174,7 +174,7 @@ if (mysqli_num_rows($result) == 0) {
                     <!-- Recent Posts -->
                     <div class="card mb-4 shadow-sm">
                         <div class="card-header bg-primary text-white">
-                            <h5 class="mb-0">Berita Terbaru</h5>
+                            <h5 class="mb-0">Artikel Terbaru</h5>
                         </div>
                         <div class="card-body">
                             <?php
@@ -189,7 +189,7 @@ if (mysqli_num_rows($result) == 0) {
                                     echo '</div>';
                                 }
                             } else {
-                                echo '<p>Belum ada berita tersedia.</p>';
+                                echo '<p>Belum ada artikel, masih kosong.</p>';
                             }
                             ?>
                         </div>

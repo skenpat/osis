@@ -141,7 +141,7 @@
                         <a class="nav-link active" href="about.php">Tentang</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="blog.php">Berita</a>
+                        <a class="nav-link" href="blog.php">Artikel</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="events.php">Kegiatan</a>
@@ -161,7 +161,7 @@
     <section class="hero-section">
         <div class="container">
             <h1 class="display-4 fw-bold">Tentang OSIS</h1>
-            <p class="lead">Mengenal lebih dekat Organisasi Siswa Intra Sekolah SMA Negeri 1</p>
+            <p class="lead">Mengenal lebih dekat Organisasi Siswa Intra Sekolah SMK Negeri 4 Banjarmasin</p>
         </div>
     </section>
 
@@ -171,8 +171,8 @@
             <div class="row">
                 <div class="col-lg-12">
                     <h2 class="section-title">Sejarah OSIS</h2>
-                    <p>Organisasi Siswa Intra Sekolah (OSIS) SMA Negeri 1 didirikan pada tahun 1985 sebagai wadah bagi siswa untuk mengembangkan potensi diri dan berkontribusi positif bagi sekolah dan masyarakat. Sejak berdirinya, OSIS telah menjadi bagian integral dari kehidupan sekolah, mengorganisir berbagai kegiatan yang mendukung pengembangan karakter, kreativitas, dan kepemimpinan siswa.</p>
-                    <p>OSIS SMA Negeri 1 terus berkembang seiring dengan perubahan zaman, menyesuaikan program kerjanya dengan kebutuhan siswa dan tantangan global. Dengan semangat "Bersama kita bisa", OSIS berkomitmen untuk mencetak generasi muda yang berprestasi, berkarakter, dan berkontribusi bagi bangsa.</p>
+                    <p>Organisasi Siswa Intra Sekolah (OSIS) SMK Negeri 4 Banjarmasin didirikan pada tahun 1985 sebagai wadah bagi siswa untuk mengembangkan potensi diri dan berkontribusi positif bagi sekolah dan masyarakat. Sejak berdirinya, OSIS telah menjadi bagian integral dari kehidupan sekolah, mengorganisir berbagai kegiatan yang mendukung pengembangan karakter, kreativitas, dan kepemimpinan siswa.</p>
+                    <p>OSIS SMK Negeri 4 Banjarmasin terus berkembang seiring dengan perubahan zaman, menyesuaikan program kerjanya dengan kebutuhan siswa dan tantangan global. Dengan semangat "Bersama kita bisa", OSIS berkomitmen untuk mencetak generasi muda yang berprestasi, berkarakter, dan berkontribusi bagi bangsa.</p>
                 </div>
             </div>
         </div>
@@ -215,7 +215,7 @@
     <section class="py-5">
         <div class="container">
             <h2 class="section-title">Struktur Organisasi</h2>
-            <p>OSIS SMA Negeri 1 memiliki struktur organisasi yang jelas dengan pembagian tugas dan tanggung jawab yang merata di antara pengurus untuk memastikan kelancaran program kerja.</p>
+            <p>OSIS SMK Negeri 4 Banjarmasin memiliki struktur organisasi yang jelas dengan pembagian tugas dan tanggung jawab yang merata di antara pengurus untuk memastikan kelancaran program kerja.</p>
             
             <div class="org-chart">
                 <div class="org-level">
@@ -284,7 +284,7 @@
                 <div class="timeline-item">
                     <div class="timeline-content">
                         <h5>1985</h5>
-                        <p>OSIS SMA Negeri 1 didirikan dengan 15 anggota pendiri.</p>
+                        <p>OSIS SMK Negeri 4 Banjarmasin didirikan dengan 15 anggota pendiri.</p>
                     </div>
                 </div>
                 <div class="timeline-item">
@@ -369,7 +369,7 @@
             <div class="row">
                 <div class="col-md-6">
                     <h5><?php echo SITE_NAME; ?></h5>
-                    <p>Organisasi Siswa Intra Sekolah SMA Negeri 1</p>
+                    <p>Organisasi Siswa Intra Sekolah SMK Negeri 4 Banjarmasin</p>
                 </div>
                 <div class="col-md-6 text-md-end">
                     <p>&copy; <?php echo date('Y'); ?> <?php echo SITE_NAME; ?>. All rights reserved.</p>

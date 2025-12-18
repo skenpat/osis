@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <a class="nav-link" href="about.php">Tentang</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="blog.php">Berita</a>
+                        <a class="nav-link" href="blog.php">Artikel</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="events.php">Kegiatan</a>
@@ -179,7 +179,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <h3 class="mb-4">Lokasi Kami</h3>
                     <div class="card shadow-sm">
                         <div class="ratio ratio-16x9">
-                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.521260922433!2d106.81956131476884!3d-6.194741995493379!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f5d2e764b12d%3A0x3d2ad6e1e0e9bcc8!2sJakarta!5e0!3m2!1sen!2sid!4v1629789154078!5m2!1sen!2sid" allowfullscreen="" loading="lazy"></iframe>
+                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3983.2233200878404!2d114.5901172!3d-3.2947944000000002!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2de423a0b07eb9cd%3A0xc5fc816bceb7bcf7!2sSekolah%20Menengah%20Kejuruan%20Negeri%204%20Banjarmasin!5e0!3m2!1sid!2sid!4v1766095002965!5m2!1sid!2sid" allowfullscreen="" loading="lazy"></iframe>
                         </div>
                     </div>
                 </div>

@@ -103,7 +103,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'mark_read' && isset($_GET['id'
                         </li>
                         <li>
                             <a href="posts.php" class="nav-link">
-                                <i class="bi bi-newspaper me-2"></i> Berita
+                                <i class="bi bi-newspaper me-2"></i> Artikel
                             </a>
                         </li>
                         <li>

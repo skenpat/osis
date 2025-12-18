@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Berita - <?php echo SITE_NAME; ?></title>
+    <title>Artikel - <?php echo SITE_NAME; ?></title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -31,16 +31,13 @@
                         <a class="nav-link" href="about.php">Tentang</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="blog.php">Berita</a>
+                        <a class="nav-link active" href="blog.php">Artikel</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="events.php">Kegiatan</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="contact.php">Kontak</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="admin/login.php"><i class="bi bi-lock-fill"></i> Admin</a>
                     </li>
                 </ul>
             </div>
@@ -50,7 +47,7 @@
     <!-- Page Header -->
     <div class="bg-primary text-white py-5">
         <div class="container">
-            <h1 class="display-4 fw-bold">Berita OSIS</h1>
+            <h1 class="display-4 fw-bold">Artikel OSIS</h1>
             <p class="lead">Informasi terkini seputar kegiatan dan pengumuman OSIS</p>
         </div>
     </div>
@@ -96,7 +93,7 @@
                             echo '</div>';
                         }
                     } else {
-                        echo '<div class="alert alert-info">Belum ada berita tersedia.</div>';
+                        echo '<div class="alert alert-info">Belum ada artikel tersedia.</div>';
                     }
                     
                     // Pagination
@@ -140,19 +137,19 @@
                             <ul class="list-group list-group-flush">
                                 <li class="list-group-item d-flex justify-content-between align-items-center">
                                     <a href="#" class="text-decoration-none">Pengumuman</a>
-                                    <span class="badge bg-primary rounded-pill">5</span>
+                                    <span class="badge bg-primary rounded-pill">0</span>
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between align-items-center">
                                     <a href="#" class="text-decoration-none">Kegiatan</a>
-                                    <span class="badge bg-primary rounded-pill">8</span>
+                                    <span class="badge bg-primary rounded-pill">0</span>
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between align-items-center">
                                     <a href="#" class="text-decoration-none">Prestasi</a>
-                                    <span class="badge bg-primary rounded-pill">3</span>
+                                    <span class="badge bg-primary rounded-pill">0</span>
                                 </li>
                                 <li class="list-group-item d-flex justify-content-between align-items-center">
                                     <a href="#" class="text-decoration-none">Umum</a>
-                                    <span class="badge bg-primary rounded-pill">7</span>
+                                    <span class="badge bg-primary rounded-pill">0</span>
                                 </li>
                             </ul>
                         </div>
@@ -161,7 +158,7 @@
                     <!-- Recent Posts -->
                     <div class="card mb-4 shadow-sm">
                         <div class="card-header bg-primary text-white">
-                            <h5 class="mb-0">Berita Terbaru</h5>
+                            <h5 class="mb-0">Artikel Terbaru</h5>
                         </div>
                         <div class="card-body">
                             <?php
@@ -176,7 +173,7 @@
                                     echo '</div>';
                                 }
                             } else {
-                                echo '<p>Belum ada berita tersedia.</p>';
+                                echo '<p>kdd artikel nyaa nee... stay tune yaa :)</p>';
                             }
                             ?>
                         </div>

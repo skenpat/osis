@@ -22,9 +22,9 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id']))
                 unlink('../uploads/' . $post['image']);
             }
             
-            $_SESSION['success'] = "Berita berhasil dihapus.";
+            $_SESSION['success'] = "Artikel berhasil dihapus.";
         } else {
-            $_SESSION['error'] = "Terjadi kesalahan. Berita gagal dihapus.";
+            $_SESSION['error'] = "Terjadi kesalahan. Artikel gagal dihapus.";
         }
     }
     
@@ -52,7 +52,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id']))
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manajemen Berita - Admin Panel</title>
+    <title>Manajemen Artikel - Admin Panel</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -96,7 +96,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id']))
                         </li>
                         <li>
                             <a href="posts.php" class="nav-link active">
-                                <i class="bi bi-newspaper me-2"></i> Berita
+                                <i class="bi bi-newspaper me-2"></i> Artikel
                             </a>
                         </li>
                         <li>
@@ -138,10 +138,10 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id']))
             <!-- Main Content -->
             <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2">Manajemen Berita</h1>
+                    <h1 class="h2">Manajemen Artikel</h1>
                     <div class="btn-toolbar mb-2 mb-md-0">
                         <div class="btn-group me-2">
-                            <a href="add-post.php" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Tambah Berita</a>
+                            <a href="add-post.php" class="btn btn-primary"><i class="bi bi-plus-circle"></i> Tambah Artikel</a>
                         </div>
                     </div>
                 </div>
@@ -196,7 +196,7 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id']))
                                                 <td>
                                                     <a href="../blog-detail.php?id=<?php echo $post['id']; ?>" class="btn btn-sm btn-info" target="_blank"><i class="bi bi-eye"></i></a>
                                                     <a href="edit-post.php?id=<?php echo $post['id']; ?>" class="btn btn-sm btn-primary"><i class="bi bi-pencil"></i></a>
-                                                    <a href="posts.php?action=delete&id=<?php echo $post['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus berita ini?')"><i class="bi bi-trash"></i></a>
+                                                    <a href="posts.php?action=delete&id=<?php echo $post['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus artikel ini?')"><i class="bi bi-trash"></i></a>
                                                 </td>
                                             </tr>
                                         <?php endwhile; ?>
@@ -235,8 +235,8 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id']))
                         <?php else: ?>
                             <div class="text-center py-4">
                                 <i class="bi bi-inbox fs-1 text-muted"></i>
-                                <p class="mt-2">Belum ada berita tersedia.</p>
-                                <a href="add-post.php" class="btn btn-primary">Tambah Berita Baru</a>
+                                <p class="mt-2">Belum ada artikel tersedia.</p>
+                                <a href="add-post.php" class="btn btn-primary">Tambah Artikel Baru</a>
                             </div>
                         <?php endif; ?>
                     </div>

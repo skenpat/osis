@@ -5,7 +5,7 @@
     --primary-light: #FF6A33;
     --primary-dark: #CC3300;
     --secondary: #f59e0b;
-    --accent: #4F46E5;
+    --accent: #e59b46;
     --success: #10b981;
     --danger: #ef4444;
     --warning: #f59e0b;
@@ -66,7 +66,7 @@
     :root {
         --primary: #f6803b;
         --primary-dark: #eb6e25;
-        --primary-light: #60a5fa;
+        --primary-light: #fab760;
         --light: #1f2937;
         --dark: #111827;
         --gray-100: #1f2937;
@@ -166,7 +166,7 @@ a:hover {
 
 /* Hero Section */
 .hero-section {
-    background: linear-gradient(135deg, rgba(255, 64, 0, 0.9), rgba(79, 70, 229, 0.8)), url('../img/hero-bg.jpg');
+    background: linear-gradient(135deg, rgba(255, 64, 0, 0.9), rgba(229, 128, 70, 0.8)), url('../img/hero-bg.jpg');
     background-size: cover;
     background-position: center;
     min-height: 80vh;

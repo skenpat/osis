@@ -109,7 +109,7 @@ require_login();
                         </li>
                         <li>
                             <a href="posts.php" class="nav-link">
-                                <i class="bi bi-newspaper me-2"></i> Berita
+                                <i class="bi bi-newspaper me-2"></i> Artikel
                             </a>
                         </li>
                         <li>
@@ -169,7 +169,7 @@ require_login();
                             <div class="card-body">
                                 <div class="row no-gutters align-items-center">
                                     <div class="col mr-2">
-                                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Berita</div>
+                                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Total Artikel</div>
                                         <div class="h5 mb-0 font-weight-bold text-gray-800"><?php echo $total_posts; ?></div>
                                     </div>
                                     <div class="col-auto">
@@ -234,7 +234,7 @@ require_login();
                     <div class="col-lg-6 mb-4">
                         <div class="card shadow-sm">
                             <div class="card-header bg-primary text-white">
-                                <h5 class="mb-0">Berita Terbaru</h5>
+                                <h5 class="mb-0">Artikel Terbaru</h5>
                             </div>
                             <div class="card-body">
                                 <?php if (mysqli_num_rows($result_recent_posts) > 0): ?>
@@ -254,7 +254,7 @@ require_login();
                                                         <td><?php echo format_date($post['created_at']); ?></td>
                                                         <td>
                                                             <a href="edit-post.php?id=<?php echo $post['id']; ?>" class="btn btn-sm btn-primary"><i class="bi bi-pencil"></i></a>
-                                                            <a href="delete-post.php?id=<?php echo $post['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus berita ini?')"><i class="bi bi-trash"></i></a>
+                                                            <a href="delete-post.php?id=<?php echo $post['id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Apakah Anda yakin ingin menghapus artikel ini?')"><i class="bi bi-trash"></i></a>
                                                         </td>
                                                     </tr>
                                                 <?php endwhile; ?>
@@ -265,7 +265,7 @@ require_login();
                                         <a href="posts.php" class="btn btn-outline-primary">Lihat Semua</a>
                                     </div>
                                 <?php else: ?>
-                                    <p>Belum ada berita tersedia.</p>
+                                    <p>Belum ada artikel tersedia.</p>
                                 <?php endif; ?>
                             </div>
                         </div>

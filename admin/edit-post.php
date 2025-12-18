@@ -68,10 +68,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                       WHERE id = $post_id";
             
             if (mysqli_query($conn, $query)) {
-                $_SESSION['success'] = "Berita berhasil diperbarui.";
+                $_SESSION['success'] = "Artikel berhasil diperbarui.";
                 redirect('posts.php');
             } else {
-                $error = "Terjadi kesalahan. Berita gagal diperbarui.";
+                $error = "Terjadi kesalahan. Artikel gagal diperbarui.";
             }
         }
     }
@@ -83,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Berita - Admin Panel</title>
+    <title>Edit Artikel - Admin Panel</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -131,7 +131,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         </li>
                         <li>
                             <a href="posts.php" class="nav-link active">
-                                <i class="bi bi-newspaper me-2"></i> Berita
+                                <i class="bi bi-newspaper me-2"></i> Artikel
                             </a>
                         </li>
                         <li>
@@ -173,7 +173,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <!-- Main Content -->
             <div class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
                 <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                    <h1 class="h2">Edit Berita</h1>
+                    <h1 class="h2">Edit Artikel</h1>
                     <div class="btn-toolbar mb-2 mb-md-0">
                         <div class="btn-group me-2">
                             <a href="posts.php" class="btn btn-outline-secondary"><i class="bi bi-arrow-left"></i> Kembali</a>
@@ -192,7 +192,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <div class="card-body">
                         <form action="edit-post.php?id=<?php echo $post_id; ?>" method="POST" enctype="multipart/form-data">
                             <div class="mb-3">
-                                <label for="title" class="form-label">Judul Berita</label>
+                                <label for="title" class="form-label">Judul Artikel</label>
                                 <input type="text" class="form-control" id="title" name="title" value="<?php echo $post['title']; ?>" required>
                             </div>
                             
@@ -222,13 +222,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             </div>
                             
                             <div class="mb-3">
-                                <label for="content" class="form-label">Isi Berita</label>
+                                <label for="content" class="form-label">Isi Artikel</label>
                                 <textarea class="form-control" id="content" name="content" rows="10" required><?php echo $post['content']; ?></textarea>
                             </div>
                             
                             <div class="d-flex justify-content-end">
                                 <a href="posts.php" class="btn btn-secondary me-2">Batal</a>
-                                <button type="submit" class="btn btn-primary">Update Berita</button>
+                                <button type="submit" class="btn btn-primary">Update Artikel</button>
                             </div>
                         </form>
                     </div>
