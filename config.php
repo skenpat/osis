@@ -23,9 +23,9 @@ try {
 }
 
 // Site Configuration
-define('SITE_URL', 'http://localhost/osis-project');
+define('SITE_URL', 'https://osis-skenpat.wasmer.app');
 define('SITE_NAME', 'OSIS SMK Negeri 4 Banjarmasin');
-define('ADMIN_EMAIL', 'admin@osis.sman1.sch.id');
+define('ADMIN_EMAIL', 'skenpat-people@gmail.com');
 
 // Start session
 session_start();

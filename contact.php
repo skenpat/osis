@@ -149,7 +149,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         </div>
                         <div class="ms-3">
                             <h5>Email</h5>
-                            <p>info@osis.sman1.sch.id</p>
+                            <p>skenpat-people@gmail.com</p>
                         </div>
                     </div>
                     <div class="d-flex mb-3">
@@ -164,10 +164,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <div class="mt-4">
                         <h5 class="mb-3">Ikuti Kami</h5>
                         <div class="d-flex gap-3">
-                            <a href="#" class="text-primary fs-4"><i class="bi bi-facebook"></i></a>
-                            <a href="#" class="text-primary fs-4"><i class="bi bi-twitter"></i></a>
-                            <a href="#" class="text-primary fs-4"><i class="bi bi-instagram"></i></a>
-                            <a href="#" class="text-primary fs-4"><i class="bi bi-youtube"></i></a>
+                            <a href="https://docs.google.com/forms/d/e/1FAIpQLSe7yFwJSVqAJTHqwoAi5F9b1rO13Y_HYC-vwROWif11wC1NOg/viewform" class="text-primary fs-4"><i class="bi-box-arrow-in-down-right"></i></a>
+                            <a href="https://www.tiktok.com/@osissmkn4bjm/" class="text-primary fs-4"><i class="bi bi-tiktok"></i></a>
+                            <a href="https://www.instagram.com/osissmkn4bjm/" class="text-primary fs-4"><i class="bi bi-instagram"></i></a>
+                            <a href="https://www.youtube.com/@smknegeri4banjarmasin931" class="text-primary fs-4"><i class="bi bi-youtube"></i></a>
                         </div>
                     </div>
                 </div>
