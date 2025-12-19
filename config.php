@@ -4,8 +4,8 @@
 define('DB_HOST', getenv('DB_HOST'));
 define('DB_PORT', 10272);
 define('DB_NAME', getenv('DB_NAME'));
-define('DB_USER', getenv('DB_USER'));
-define('DB_PASS', getenv('DB_PASS'));
+define('DB_USER', '218212fb78408000caa68efa941e');
+define('DB_PASS', '06942182-12fb-7b70-8000-ec49bfef5d57');
 
 // Cek isi variabel environment
 var_dump(DB_HOST, DB_NAME, DB_USER, DB_PASS);
