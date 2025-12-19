@@ -2,6 +2,7 @@
 // Debug: cek isi variabel environment
 var_dump(getenv('DB_HOST'), getenv('DB_NAME'), getenv('DB_USER'), getenv('DB_PASS'));
 exit; // agar tidak lanjut eksekusi
+
 // Database Configuration
 define('DB_HOST', getenv('DB_HOST'));
 define('DB_PORT', 10272);
