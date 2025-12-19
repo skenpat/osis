@@ -15,7 +15,7 @@
     <link href="assets/css/style.css" rel="stylesheet">
     <style>
         .hero-section {
-            background: linear-gradient(rgba(13, 110, 253, 0.8), rgba(13, 110, 253, 0.6)), url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80');
+            background: linear-gradient(rgba(13, 110, 253, 0.8), rgba(253, 13, 13, 0.6)), url('https://ik.imagekit.io/fles/fotbar2025.jpg?updatedAt=1766155861870');
             background-size: cover;
             background-position: center;
             color: white;
@@ -34,7 +34,7 @@
             bottom: 0;
             width: 80px;
             height: 3px;
-            background-color: #0d6efd;
+            background-color: #fd590dff;
         }
         .timeline {
             position: relative;
@@ -61,7 +61,7 @@
             width: 20px;
             height: 20px;
             border-radius: 50%;
-            background-color: #0d6efd;
+            background-color: #fd650dff;
             transform: translateX(-50%);
         }
         .timeline-content {
@@ -88,7 +88,7 @@
             margin-bottom: 20px;
         }
         .org-box {
-            background-color: #0d6efd;
+            background-color: #fd650dff;
             color: white;
             padding: 15px;
             border-radius: 5px;
@@ -245,31 +245,35 @@
                 
                 <div class="org-level">
                     <div class="org-box tertiary">
-                        <h5>Seksi Kesra</h5>
-                        <p>Kesejahteraan Siswa</p>
+                        <h5>Wirausaha</h5>
+                        <p>Sektor Bidang</p>
                     </div>
                     <div class="org-box tertiary">
-                        <h5>Seksi PSDM</h5>
-                        <p>Pengembangan SDM</p>
+                        <h5>Lingkungan Hidup</h5>
+                        <p>Sektor Bidang</p>
                     </div>
                     <div class="org-box tertiary">
-                        <h5>Seksi Prestasi</h5>
-                        <p>Pendampingan Prestasi</p>
+                        <h5>Hubungan Masyarakat</h5>
+                        <p>Sektor Bidang</p>
                     </div>
                 </div>
                 
                 <div class="org-level">
                     <div class="org-box tertiary">
-                        <h5>Seksi Humas</h5>
-                        <p>Hubungan Masyarakat</p>
+                        <h5>Kepemimpinan</h5>
+                        <p>Sektor Bidang</p>
                     </div>
                     <div class="org-box tertiary">
-                        <h5>Seksi Sosial</h5>
-                        <p>Kegiatan Sosial</p>
+                        <h5>Olahraga</h5>
+                        <p>Sektor Bidang</p>
                     </div>
                     <div class="org-box tertiary">
-                        <h5>Seksi Seni Budaya</h5>
-                        <p>Pengembangan Seni & Budaya</p>
+                        <h5>Keagamaan</h5>
+                        <p>Sektor Bidang</p>
+                    </div>
+                    <div class="org-box tertiary">
+                        <h5>Bela Negara</h5>
+                        <p>Sektor Bidang</p>
                     </div>
                 </div>
             </div>
@@ -283,38 +287,27 @@
             <div class="timeline">
                 <div class="timeline-item">
                     <div class="timeline-content">
-                        <h5>1985</h5>
-                        <p>OSIS SMK Negeri 4 Banjarmasin didirikan dengan 15 anggota pendiri.</p>
+                        <h5>1957</h5>
+                        <p>OSIS SMK Negeri 4 Banjarmasin didirikan</p>
                     </div>
+                </div>
                 </div>
                 <div class="timeline-item">
                     <div class="timeline-content">
-                        <h5>1990</h5>
-                        <p>Menyelenggarakan kegiatan OSIS tingkat kota pertama kali.</p>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-content">
-                        <h5>2000</h5>
-                        <p>Memperluas struktur organisasi dengan menambah seksi-seksi baru.</p>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-content">
-                        <h5>2010</h5>
-                        <p>Meluncurkan website OSIS pertama untuk meningkatkan komunikasi.</p>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-content">
-                        <h5>2020</h5>
-                        <p>Beradaptasi dengan pandemi dengan mengadakan kegiatan daring.</p>
+                        <h5>2017</h5>
+                        <p>Akun instagram OSIS SMKN 4 Banjarmasin Dibuat</p>
                     </div>
                 </div>
                 <div class="timeline-item">
                     <div class="timeline-content">
                         <h5>2023</h5>
-                        <p>Meluncurkan website baru dengan fitur yang lebih lengkap dan modern.</p>
+                        <p>Akun TikTok OSIS SMKN 4 Banjarmasin Dibuat</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <h5>2025</h5>
+                        <p>Website Official OSIS SMKN 4 Banjarmasin Diluncurkan</p>
                     </div>
                 </div>
             </div>
