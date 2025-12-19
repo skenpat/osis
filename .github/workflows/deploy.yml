@@ -1,0 +1,21 @@
+name: Run PHP Script with Secrets
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      DB_HOST: ${{ secrets.DB_HOSTW }}
+      DB_NAME: ${{ secrets.DB_NAMEW }}
+      DB_USER: ${{ secrets.DB_USERW }}
+      DB_PASS: ${{ secrets.DB_PASSW }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Run PHP script
+        run: php your_script.php
