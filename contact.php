@@ -131,7 +131,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         </div>
                         <div class="ms-3">
                             <h5>Alamat</h5>
-                            <p>Jl. Pendidikan No. 123, Jakarta, Indonesia</p>
+                            <p>Jl. Brigjend H. Hasan Basri, Sungai Miai, Kec. Banjarmasin Utara, Kota Banjarmasin, Kalimantan Selatan 70123</p>
                         </div>
                     </div>
                     <div class="d-flex mb-3">

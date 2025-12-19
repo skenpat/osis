@@ -1,10 +1,16 @@
 <?php
+// Debug: cek isi variabel environment
+var_dump(getenv('DB_HOST'), getenv('DB_NAME'), getenv('DB_USER'), getenv('DB_PASS'));
+exit; // agar tidak lanjut eksekusi
 // Database Configuration
 define('DB_HOST', getenv('DB_HOST'));
 define('DB_PORT', 10272);
 define('DB_NAME', getenv('DB_NAME'));
 define('DB_USER', getenv('DB_USER'));
 define('DB_PASS', getenv('DB_PASS'));
+
+// Cek isi variabel environment
+var_dump(DB_HOST, DB_NAME, DB_USER, DB_PASS);
 
 // Error reporting
 error_reporting(E_ALL);

@@ -11,8 +11,8 @@ jobs:
     env:
       DB_HOST: ${{ secrets.DB_HOSTW }}
       DB_NAME: ${{ secrets.DB_NAMEW }}
-      DB_USER: ${{ secrets.DB_USERW }}
       DB_PASS: ${{ secrets.DB_PASSW }}
+      DB_USER: ${{ secrets.DB_USERW }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
