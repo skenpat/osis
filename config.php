@@ -7,9 +7,6 @@ define('DB_NAME', getenv('DB_NAME'));
 define('DB_USER', '218212fb78408000caa68efa941e');
 define('DB_PASS', '06942182-12fb-7b70-8000-ec49bfef5d57');
 
-// Cek isi variabel environment
-var_dump(DB_HOST, DB_NAME, DB_USER, DB_PASS);
-
 // Error reporting
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
