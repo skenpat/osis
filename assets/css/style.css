@@ -166,7 +166,7 @@ a:hover {
 
 /* Hero Section */
 .hero-section {
-    background: linear-gradient(135deg, rgba(255, 64, 0, 0.9), rgba(229, 128, 70, 0.8)), url('../img/hero-bg.jpg');
+    background: linear-gradient(135deg, rgba(255, 64, 0, 0.9), rgba(229, 128, 70, 0.8)), url('/img/hero-bg.jpg');
     background-size: cover;
     background-position: center;
     min-height: 80vh;
@@ -582,7 +582,7 @@ footer a:hover {
 }
 
 .testimonial-content::before {
-    content: "" ";
+    content: "";
  font-size: 4rem;
     color: var(--primary);
     position: absolute;

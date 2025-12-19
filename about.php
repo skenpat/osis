@@ -15,7 +15,7 @@
     <link href="assets/css/style.css" rel="stylesheet">
     <style>
         .hero-section {
-            background: linear-gradient(rgba(13, 110, 253, 0.8), rgba(253, 13, 13, 0.6)), url('https://ik.imagekit.io/fles/fotbar2025.jpg?updatedAt=1766155861870');
+            background: linear-gradient(rgba(43, 128, 255, 0.8), rgba(250, 250, 250, 0.75)), url('https://ik.imagekit.io/fles/fotbar2025.jpg?updatedAt=1766187218901');
             background-size: cover;
             background-position: center;
             color: white;
@@ -148,9 +148,6 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="contact.php">Kontak</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="admin/login.php"><i class="bi bi-lock-fill"></i> Admin</a>
                     </li>
                 </ul>
             </div>
