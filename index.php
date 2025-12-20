@@ -87,7 +87,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: url('/img/hero-bg.jpg') center/cover;
+            background: url('https://ik.imagekit.io/fles/ketos_reno.jpg?updatedAt=1766154448985') center/cover;
             opacity: 0.15;
             z-index: 0;
         }
@@ -544,7 +544,7 @@
                     </div>
                 </div>
                 <div class="col-lg-6 hero-image" data-aos="fade-left">
-                    <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="OSIS Activities" class="floating">
+                    <img src="https://res.cloudinary.com/dahcxjdbl/image/upload/v1766196359/osis4_100x_vnzamj.png" alt="Logo OSIS" class="floating">
                 </div>
             </div>
         </div>
