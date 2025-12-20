@@ -55,69 +55,251 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <!-- Custom CSS -->
     <link href="../assets/css/style.css" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --accent-color: #f72585;
+            --dark-color: #2b2d42;
+            --light-color: #f8f9fa;
+            --gradient: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        }
+        
         body {
-            background-color: #f8f9fa;
-            height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-        .login-container {
-            max-width: 400px;
-            width: 100%;
-            padding: 15px;
-        }
-        .login-card {
-            border: none;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-        .login-header {
-            background-color: #0d6efd;
-            color: white;
-            border-radius: 10px 10px 0 0;
             padding: 20px;
+        }
+        
+        .login-container {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        
+        .login-image {
+            flex: 1;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .login-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80') center/cover;
+            opacity: 0.2;
+        }
+        
+        .login-image-content {
+            position: relative;
+            z-index: 1;
             text-align: center;
+            color: white;
+        }
+        
+        .login-image-content h2 {
+            font-weight: 700;
+            margin-bottom: 20px;
+            font-size: 2.5rem;
+        }
+        
+        .login-image-content p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+        
+        .login-image-content img {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .login-form {
+            flex: 1;
+            padding: 60px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .login-header h3 {
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 10px;
+            font-size: 2rem;
+        }
+        
+        .login-header p {
+            color: #6c757d;
+            font-size: 1rem;
+        }
+        
+        .form-floating {
+            margin-bottom: 20px;
+        }
+        
+        .form-control {
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 12px 15px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            height: 60px;
+        }
+        
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(67, 97, 238, 0.25);
+        }
+        
+        .form-floating label {
+            color: #6c757d;
+            padding: 1rem 15px;
+        }
+        
+        .form-floating .form-control:focus ~ label {
+            color: var(--primary-color);
+        }
+        
+        .btn-login {
+            background: var(--gradient);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 20px;
+        }
+        
+        .btn-login:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .alert {
+            border-radius: 10px;
+            border: none;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+        }
+        
+        .alert-danger {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+        }
+        
+        .login-footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        .login-footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .login-footer a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .login-container {
+                flex-direction: column;
+                max-width: 500px;
+            }
+            
+            .login-image {
+                padding: 30px;
+            }
+            
+            .login-image-content h2 {
+                font-size: 2rem;
+            }
+            
+            .login-form {
+                padding: 40px 30px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .login-form {
+                padding: 30px 20px;
+            }
+            
+            .login-header h3 {
+                font-size: 1.5rem;
+            }
         }
     </style>
 </head>
 <body>
     <div class="login-container">
-        <div class="card login-card">
+        <div class="login-image">
+            <div class="login-image-content">
+                <h2><?php echo SITE_NAME; ?></h2>
+                <p>Admin Panel</p>
+                <img src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" alt="Admin Panel">
+            </div>
+        </div>
+        <div class="login-form">
             <div class="login-header">
-                <h4 class="mb-0">Admin Login</h4>
-                <p class="mb-0"><?php echo SITE_NAME; ?></p>
+                <h3>Selamat Datang</h3>
+                <p>Silakan masuk ke akun admin Anda</p>
             </div>
-            <div class="card-body p-4">
-                <?php if (isset($error)): ?>
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <?php echo $error; ?>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                <?php endif; ?>
-                
-                <form action="login.php" method="POST">
-                    <div class="mb-3">
-                        <label for="username" class="form-label">Username</label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="bi bi-person"></i></span>
-                            <input type="text" class="form-control" id="username" name="username" required>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Password</label>
-                        <div class="input-group">
-                            <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                            <input type="password" class="form-control" id="password" name="password" required>
-                        </div>
-                    </div>
-                    <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-primary">Login</button>
-                    </div>
-                </form>
-            </div>
-            <div class="card-footer text-center text-muted py-3">
-                <p class="mb-0">&copy; <?php echo date('Y'); ?> <?php echo SITE_NAME; ?></p>
+            
+            <?php if (isset($error)): ?>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <?php echo $error; ?>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            <?php endif; ?>
+            
+            <form action="login.php" method="POST">
+                <div class="form-floating">
+                    <input type="text" class="form-control" id="username" name="username" placeholder="Username" required>
+                    <label for="username">Username</label>
+                </div>
+                <div class="form-floating">
+                    <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
+                    <label for="password">Password</label>
+                </div>
+                <button type="submit" class="btn btn-login">Masuk</button>
+            </form>
+            
+            <div class="login-footer">
+                <p>&copy; <?php echo date('Y'); ?> <?php echo SITE_NAME; ?>. All rights reserved.</p>
+                <p>Developed by <a href="https://github.com/orgs/skenpat/people">skenpat-people</a></p>
             </div>
         </div>
     </div>
