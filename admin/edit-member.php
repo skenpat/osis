@@ -2,43 +2,77 @@
 require_once '../config.php';
 require_login();
 
-// Get current settings
- $query = "SELECT * FROM settings LIMIT 1";
+// Get member ID
+if (!isset($_GET['id']) || empty($_GET['id'])) {
+    redirect('members.php');
+}
+
+ $member_id = (int)$_GET['id'];
+
+// Get member data
+ $query = "SELECT * FROM members WHERE id = $member_id";
  $result = mysqli_query($conn, $query);
- $settings = mysqli_fetch_assoc($result);
+
+if (mysqli_num_rows($result) == 0) {
+    redirect('members.php');
+}
+
+ $member = mysqli_fetch_assoc($result);
 
 // Process form submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $site_name = clean_input($_POST['site_name']);
-    $site_description = clean_input($_POST['site_description']);
-    $contact_email = clean_input($_POST['contact_email']);
-    $contact_phone = clean_input($_POST['contact_phone']);
-    $contact_address = clean_input($_POST['contact_address']);
-    $social_facebook = clean_input($_POST['social_facebook']);
-    $social_twitter = clean_input($_POST['social_twitter']);
-    $social_instagram = clean_input($_POST['social_instagram']);
-    $social_youtube = clean_input($_POST['social_youtube']);
+    $name = clean_input($_POST['name']);
+    $position = clean_input($_POST['position']);
+    $class = clean_input($_POST['class']);
+    $status = clean_input($_POST['status']);
+    $current_photo = $member['photo'];
     
     // Validate form data
-    if (empty($site_name) || empty($contact_email)) {
-        $error = "Nama situs dan email kontak harus diisi.";
+    if (empty($name) || empty($position) || empty($class) || empty($status)) {
+        $error = "Semua field harus diisi.";
     } else {
-        // Update settings in database
-        $query = "UPDATE settings SET 
-                  site_name = '$site_name', 
-                  site_description = '$site_description', 
-                  contact_email = '$contact_email', 
-                  contact_phone = '$contact_phone', 
-                  contact_address = '$contact_address', 
-                  social_facebook = '$social_facebook', 
-                  social_twitter = '$social_twitter', 
-                  social_instagram = '$social_instagram', 
-                  social_youtube = '$social_youtube'";
+        // Handle photo upload
+        $photo = $current_photo;
+        if (isset($_FILES['photo']) && $_FILES['photo']['error'] == 0) {
+            $allowed_types = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+            $file_type = $_FILES['photo']['type'];
+            
+            if (in_array($file_type, $allowed_types)) {
+                $file_name = time() . '_' . $_FILES['photo']['name'];
+                $file_tmp = $_FILES['photo']['tmp_name'];
+                $upload_dir = '../uploads/';
+                
+                if (move_uploaded_file($file_tmp, $upload_dir . $file_name)) {
+                    // Delete old photo if exists
+                    if (!empty($current_photo) && file_exists($upload_dir . $current_photo)) {
+                        unlink($upload_dir . $current_photo);
+                    }
+                    
+                    $photo = $file_name;
+                } else {
+                    $error = "Gagal mengupload foto.";
+                }
+            } else {
+                $error = "Format foto tidak valid. Hanya JPEG, JPG, PNG, dan GIF yang diperbolehkan.";
+            }
+        }
         
-        if (mysqli_query($conn, $query)) {
-            $_SESSION['success'] = "Pengaturan berhasil diperbarui.";
-        } else {
-            $error = "Terjadi kesalahan. Pengaturan gagal diperbarui.";
+        if (!isset($error)) {
+            // Update member in database
+            $query = "UPDATE members SET 
+                      name = '$name', 
+                      position = '$position', 
+                      class = '$class', 
+                      status = '$status', 
+                      photo = '$photo' 
+                      WHERE id = $member_id";
+            
+            if (mysqli_query($conn, $query)) {
+                $_SESSION['success'] = "Anggota berhasil diperbarui.";
+                redirect('members.php');
+            } else {
+                $error = "Terjadi kesalahan. Anggota gagal diperbarui.";
+            }
         }
     }
 }
@@ -49,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pengaturan - Admin Panel</title>
+    <title>Edit Anggota - Admin Panel</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -265,61 +299,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             padding: 30px;
         }
         
-        /* Settings Tabs */
-        .settings-tabs {
-            display: flex;
-            gap: 5px;
-            margin-bottom: 30px;
-            border-bottom: 1px solid #e9ecef;
-        }
-        
-        .tab-btn {
-            padding: 10px 20px;
-            background: transparent;
-            border: none;
-            border-bottom: 3px solid transparent;
-            color: #6c757d;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        
-        .tab-btn:hover {
-            color: var(--primary-color);
-        }
-        
-        .tab-btn.active {
-            color: var(--primary-color);
-            border-bottom-color: var(--primary-color);
-        }
-        
-        /* Settings Forms */
-        .settings-form {
+        /* Form Card */
+        .form-card {
             background: white;
             border-radius: 15px;
             padding: 30px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
         }
         
-        .tab-content {
-            display: none;
+        .form-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #f1f3f7;
         }
         
-        .tab-content.active {
-            display: block;
-        }
-        
-        .form-section {
-            margin-bottom: 40px;
-        }
-        
-        .section-title {
-            font-size: 1.2rem;
+        .form-title {
+            font-size: 1.3rem;
             font-weight: 700;
             color: var(--dark-color);
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #f1f3f7;
+            margin: 0;
         }
         
         .form-group {
@@ -349,6 +350,65 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             color: #6c757d;
             font-size: 0.85rem;
             margin-top: 5px;
+        }
+        
+        /* Image Upload */
+        .image-upload {
+            border: 2px dashed #e9ecef;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .image-upload:hover {
+            border-color: var(--primary-color);
+            background: rgba(67, 97, 238, 0.05);
+        }
+        
+        .image-upload input[type="file"] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+        
+        .upload-icon {
+            font-size: 3rem;
+            color: #6c757d;
+            margin-bottom: 15px;
+        }
+        
+        .upload-text {
+            color: #6c757d;
+            margin-bottom: 10px;
+        }
+        
+        .upload-hint {
+            color: #adb5bd;
+            font-size: 0.85rem;
+        }
+        
+        .preview-image {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 50%;
+            margin-top: 15px;
+            display: none;
+            border: 4px solid var(--light-color);
+        }
+        
+        .current-image {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 50%;
+            margin-top: 15px;
+            border: 4px solid var(--light-color);
         }
         
         /* Buttons */
@@ -398,39 +458,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             margin-bottom: 20px;
         }
         
-        .alert-success {
-            background: rgba(25, 135, 84, 0.1);
-            color: #198754;
-        }
-        
         .alert-danger {
             background: rgba(220, 53, 69, 0.1);
             color: #dc3545;
-        }
-        
-        /* Social Media Icons */
-        .social-icons {
-            display: flex;
-            gap: 15px;
-            margin-top: 10px;
-        }
-        
-        .social-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--light-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--dark-color);
-            transition: all 0.3s ease;
-        }
-        
-        .social-icon:hover {
-            background: var(--gradient);
-            color: white;
-            transform: translateY(-3px);
         }
         
         /* Mobile Menu Toggle */
@@ -468,11 +498,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             .mobile-menu-toggle {
                 display: flex;
             }
-            
-            .settings-tabs {
-                overflow-x: auto;
-                white-space: nowrap;
-            }
         }
         
         @media (max-width: 768px) {
@@ -488,8 +513,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 font-size: 1.2rem;
             }
             
-            .settings-form {
+            .form-card {
                 padding: 20px;
+            }
+            
+            .form-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
             }
             
             .form-actions {
@@ -529,7 +560,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <i class="bi bi-calendar-event"></i>
                 <span>Kegiatan</span>
             </a>
-            <a href="members.php" class="menu-item">
+            <a href="members.php" class="menu-item active">
                 <i class="bi bi-people"></i>
                 <span>Anggota</span>
             </a>
@@ -537,7 +568,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <i class="bi bi-envelope"></i>
                 <span>Pesan</span>
             </a>
-            <a href="settings.php" class="menu-item active">
+            <a href="settings.php" class="menu-item">
                 <i class="bi bi-gear"></i>
                 <span>Pengaturan</span>
             </a>
@@ -559,7 +590,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <div class="main-content">
         <!-- Top Bar -->
         <div class="top-bar">
-            <h1 class="page-title">Pengaturan</h1>
+            <h1 class="page-title">Edit Anggota</h1>
             <div class="top-bar-actions">
                 <button class="notification-btn">
                     <i class="bi bi-bell"></i>
@@ -572,124 +603,79 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         
         <!-- Content Area -->
         <div class="content-area">
-            <?php if (isset($error)): ?>
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <?php echo $error; ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            <?php endif; ?>
-            
-            <?php if (isset($_SESSION['success'])): ?>
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    <?php echo $_SESSION['success']; unset($_SESSION['success']); ?>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            <?php endif; ?>
-            
-            <!-- Settings Form -->
-            <div class="settings-form">
-                <!-- Settings Tabs -->
-                <div class="settings-tabs">
-                    <button class="tab-btn active" data-tab="general">Umum</button>
-                    <button class="tab-btn" data-tab="contact">Kontak</button>
-                    <button class="tab-btn" data-tab="social">Media Sosial</button>
+            <div class="form-card">
+                <div class="form-header">
+                    <h2 class="form-title">Edit Informasi Anggota</h2>
+                    <a href="members.php" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i> Kembali
+                    </a>
                 </div>
                 
-                <!-- General Settings -->
-                <div class="tab-content active" id="general">
-                    <form action="settings.php" method="POST">
-                        <div class="form-section">
-                            <h3 class="section-title">Pengaturan Umum</h3>
-                            <div class="form-group">
-                                <label for="site_name" class="form-label">Nama Situs</label>
-                                <input type="text" class="form-control" id="site_name" name="site_name" value="<?php echo $settings['site_name']; ?>" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="site_description" class="form-label">Deskripsi Situs</label>
-                                <textarea class="form-control" id="site_description" name="site_description" rows="4"><?php echo $settings['site_description']; ?></textarea>
-                            </div>
-                        </div>
-                        
-                        <div class="form-actions">
-                            <button type="reset" class="btn btn-secondary">Reset</button>
-                            <button type="submit" class="btn btn-primary">Simpan Pengaturan</button>
-                        </div>
-                    </form>
-                </div>
+                <?php if (isset($error)): ?>
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <?php echo $error; ?>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                <?php endif; ?>
                 
-                <!-- Contact Settings -->
-                <div class="tab-content" id="contact">
-                    <form action="settings.php" method="POST">
-                        <div class="form-section">
-                            <h3 class="section-title">Informasi Kontak</h3>
+                <form action="edit-member.php?id=<?php echo $member_id; ?>" method="POST" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-md-6">
                             <div class="form-group">
-                                <label for="contact_email" class="form-label">Email Kontak</label>
-                                <input type="email" class="form-control" id="contact_email" name="contact_email" value="<?php echo $settings['contact_email']; ?>" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="contact_phone" class="form-label">Telepon</label>
-                                <input type="text" class="form-control" id="contact_phone" name="contact_phone" value="<?php echo $settings['contact_phone']; ?>">
-                            </div>
-                            <div class="form-group">
-                                <label for="contact_address" class="form-label">Alamat</label>
-                                <textarea class="form-control" id="contact_address" name="contact_address" rows="3"><?php echo $settings['contact_address']; ?></textarea>
+                                <label for="name" class="form-label">Nama Lengkap</label>
+                                <input type="text" class="form-control" id="name" name="name" value="<?php echo $member['name']; ?>" required>
                             </div>
                         </div>
-                        
-                        <div class="form-actions">
-                            <button type="reset" class="btn btn-secondary">Reset</button>
-                            <button type="submit" class="btn btn-primary">Simpan Pengaturan</button>
-                        </div>
-                    </form>
-                </div>
-                
-                <!-- Social Media Settings -->
-                <div class="tab-content" id="social">
-                    <form action="settings.php" method="POST">
-                        <div class="form-section">
-                            <h3 class="section-title">Media Sosial</h3>
+                        <div class="col-md-6">
                             <div class="form-group">
-                                <label for="social_facebook" class="form-label">Facebook</label>
-                                <input type="url" class="form-control" id="social_facebook" name="social_facebook" value="<?php echo $settings['social_facebook']; ?>">
-                            </div>
-                            <div class="form-group">
-                                <label for="social_twitter" class="form-label">Twitter</label>
-                                <input type="url" class="form-control" id="social_twitter" name="social_twitter" value="<?php echo $settings['social_twitter']; ?>">
-                            </div>
-                            <div class="form-group">
-                                <label for="social_instagram" class="form-label">Instagram</label>
-                                <input type="url" class="form-control" id="social_instagram" name="social_instagram" value="<?php echo $settings['social_instagram']; ?>">
-                            </div>
-                            <div class="form-group">
-                                <label for="social_youtube" class="form-label">YouTube</label>
-                                <input type="url" class="form-control" id="social_youtube" name="social_youtube" value="<?php echo $settings['social_youtube']; ?>">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label class="form-label">Pratinjau</label>
-                                <div class="social-icons">
-                                    <a href="<?php echo $settings['social_facebook']; ?>" class="social-icon" target="_blank">
-                                        <i class="bi bi-facebook"></i>
-                                    </a>
-                                    <a href="<?php echo $settings['social_twitter']; ?>" class="social-icon" target="_blank">
-                                        <i class="bi bi-twitter"></i>
-                                    </a>
-                                    <a href="<?php echo $settings['social_instagram']; ?>" class="social-icon" target="_blank">
-                                        <i class="bi bi-instagram"></i>
-                                    </a>
-                                    <a href="<?php echo $settings['social_youtube']; ?>" class="social-icon" target="_blank">
-                                        <i class="bi bi-youtube"></i>
-                                    </a>
-                                </div>
+                                <label for="position" class="form-label">Jabatan</label>
+                                <input type="text" class="form-control" id="position" name="position" value="<?php echo $member['position']; ?>" required>
                             </div>
                         </div>
-                        
-                        <div class="form-actions">
-                            <button type="reset" class="btn btn-secondary">Reset</button>
-                            <button type="submit" class="btn btn-primary">Simpan Pengaturan</button>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="class" class="form-label">Kelas</label>
+                                <input type="text" class="form-control" id="class" name="class" value="<?php echo $member['class']; ?>" required>
+                            </div>
                         </div>
-                    </form>
-                </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="status" class="form-label">Status</label>
+                                <select class="form-select" id="status" name="status" required>
+                                    <option value="">Pilih Status</option>
+                                    <option value="active" <?php echo ($member['status'] == 'active') ? 'selected' : ''; ?>>Aktif</option>
+                                    <option value="inactive" <?php echo ($member['status'] == 'inactive') ? 'selected' : ''; ?>>Tidak Aktif</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Foto Anggota</label>
+                        <div class="image-upload">
+                            <input type="file" id="photo" name="photo" accept="image/*">
+                            <div class="upload-icon">
+                                <i class="bi bi-person-plus"></i>
+                            </div>
+                            <div class="upload-text">Klik untuk mengganti foto</div>
+                            <div class="upload-hint">Format yang diperbolehkan: JPEG, JPG, PNG, GIF. Kosongkan jika tidak ingin mengubah foto.</div>
+                            <img id="preview" class="preview-image" alt="Preview">
+                        </div>
+                        <?php if (!empty($member['photo'])): ?>
+                            <img src="../uploads/<?php echo $member['photo']; ?>" class="current-image" alt="Current Photo">
+                        <?php endif; ?>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <a href="members.php" class="btn btn-secondary">Batal</a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> Update Anggota
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -706,21 +692,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             sidebar.classList.toggle('active');
         });
         
-        // Tab functionality
-        const tabBtns = document.querySelectorAll('.tab-btn');
-        const tabContents = document.querySelectorAll('.tab-content');
-        
-        tabBtns.forEach(btn => {
-            btn.addEventListener('click', function() {
-                // Remove active class from all tabs and contents
-                tabBtns.forEach(b => b.classList.remove('active'));
-                tabContents.forEach(c => c.classList.remove('active'));
+        // Image preview
+        document.getElementById('photo').addEventListener('change', function(e) {
+            const preview = document.getElementById('preview');
+            
+            if (e.target.files && e.target.files[0]) {
+                const reader = new FileReader();
                 
-                // Add active class to clicked tab and corresponding content
-                this.classList.add('active');
-                const tabId = this.dataset.tab;
-                document.getElementById(tabId).classList.add('active');
-            });
+                reader.onload = function(e) {
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                }
+                
+                reader.readAsDataURL(e.target.files[0]);
+            } else {
+                preview.style.display = 'none';
+            }
         });
     </script>
 </body>

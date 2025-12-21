@@ -2,43 +2,47 @@
 require_once '../config.php';
 require_login();
 
-// Get statistics
+// Get statistics with secure queries
 // Total posts
- $query_posts = "SELECT COUNT(*) as total FROM posts";
- $result_posts = mysqli_query($conn, $query_posts);
- $total_posts = mysqli_fetch_assoc($result_posts)['total'];
+ $stmt_posts = $conn->prepare("SELECT COUNT(*) as total FROM posts");
+ $stmt_posts->execute();
+ $total_posts = $stmt_posts->get_result()->fetch_assoc()['total'];
 
 // Total events
- $query_events = "SELECT COUNT(*) as total FROM events";
- $result_events = mysqli_query($conn, $query_events);
- $total_events = mysqli_fetch_assoc($result_events)['total'];
+ $stmt_events = $conn->prepare("SELECT COUNT(*) as total FROM events");
+ $stmt_events->execute();
+ $total_events = $stmt_events->get_result()->fetch_assoc()['total'];
 
 // Total messages
- $query_messages = "SELECT COUNT(*) as total FROM contacts";
- $result_messages = mysqli_query($conn, $query_messages);
- $total_messages = mysqli_fetch_assoc($result_messages)['total'];
+ $stmt_messages = $conn->prepare("SELECT COUNT(*) as total FROM contacts");
+ $stmt_messages->execute();
+ $total_messages = $stmt_messages->get_result()->fetch_assoc()['total'];
 
 // Unread messages
- $query_unread = "SELECT COUNT(*) as total FROM contacts WHERE status = 'unread'";
- $result_unread = mysqli_query($conn, $query_unread);
- $unread_messages = mysqli_fetch_assoc($result_unread)['total'];
+ $stmt_unread = $conn->prepare("SELECT COUNT(*) as total FROM contacts WHERE status = ?");
+ $stmt_unread->bind_param("s", 'unread');
+ $stmt_unread->execute();
+ $unread_messages = $stmt_unread->get_result()->fetch_assoc()['total'];
 
 // Total members
- $query_members = "SELECT COUNT(*) as total FROM members";
- $result_members = mysqli_query($conn, $query_members);
- $total_members = mysqli_fetch_assoc($result_members)['total'];
+ $stmt_members = $conn->prepare("SELECT COUNT(*) as total FROM members");
+ $stmt_members->execute();
+ $total_members = $stmt_members->get_result()->fetch_assoc()['total'];
 
-// Get recent posts
- $query_recent_posts = "SELECT * FROM posts ORDER BY created_at DESC LIMIT 5";
- $result_recent_posts = mysqli_query($conn, $query_recent_posts);
+// Get recent posts with prepared statement
+ $stmt_recent_posts = $conn->prepare("SELECT * FROM posts ORDER BY created_at DESC LIMIT 5");
+ $stmt_recent_posts->execute();
+ $result_recent_posts = $stmt_recent_posts->get_result();
 
-// Get recent events
- $query_recent_events = "SELECT * FROM events ORDER BY created_at DESC LIMIT 5";
- $result_recent_events = mysqli_query($conn, $query_recent_events);
+// Get recent events with prepared statement
+ $stmt_recent_events = $conn->prepare("SELECT * FROM events ORDER BY created_at DESC LIMIT 5");
+ $stmt_recent_events->execute();
+ $result_recent_events = $stmt_recent_events->get_result();
 
-// Get recent messages
- $query_recent_messages = "SELECT * FROM contacts ORDER BY created_at DESC LIMIT 5";
- $result_recent_messages = mysqli_query($conn, $query_recent_messages);
+// Get recent messages with prepared statement
+ $stmt_recent_messages = $conn->prepare("SELECT * FROM contacts ORDER BY created_at DESC LIMIT 5");
+ $stmt_recent_messages->execute();
+ $result_recent_messages = $stmt_recent_messages->get_result();
 ?>
 
 <!DOCTYPE html>
@@ -83,6 +87,7 @@ require_login();
             background: var(--dark-color);
             z-index: 1000;
             transition: all 0.3s ease;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
         }
         
         .sidebar-header {
@@ -417,6 +422,7 @@ require_login();
             font-size: 1.1rem;
             font-weight: 600;
             color: var(--dark-color);
+            margin: 0;
         }
         
         .chart-options {
@@ -448,6 +454,20 @@ require_login();
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
         }
         
+        .activity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .activity-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--dark-color);
+            margin: 0;
+        }
+        
         .activity-list {
             max-height: 400px;
             overflow-y: auto;
@@ -470,7 +490,6 @@ require_login();
             border-radius: 50%;
             display: flex;
             align-items: center;
-            justify-content: center;
             margin-right: 15px;
             flex-shrink: 0;
         }
@@ -564,10 +583,6 @@ require_login();
             .page-title {
                 font-size: 1.2rem;
             }
-            
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
         }
     </style>
 </head>
@@ -605,9 +620,6 @@ require_login();
             <a href="messages.php" class="menu-item">
                 <i class="bi bi-envelope"></i>
                 <span>Pesan</span>
-                <?php if ($unread_messages > 0): ?>
-                    <span class="notification-badge"><?php echo $unread_messages; ?></span>
-                <?php endif; ?>
             </a>
             <a href="settings.php" class="menu-item">
                 <i class="bi bi-gear"></i>
@@ -657,6 +669,7 @@ require_login();
                     <div class="stat-label">Total Artikel</div>
                     <div class="stat-change positive">+12%</div>
                 </div>
+                </div>
                 <div class="stat-card events">
                     <div class="stat-icon">
                         <i class="bi bi-calendar-event"></i>
@@ -665,6 +678,7 @@ require_login();
                     <div class="stat-label">Total Kegiatan</div>
                     <div class="stat-change positive">+8%</div>
                 </div>
+                </div>
                 <div class="stat-card messages">
                     <div class="stat-icon">
                         <i class="bi bi-envelope"></i>
@@ -672,6 +686,7 @@ require_login();
                     <div class="stat-value"><?php echo $total_messages; ?></div>
                     <div class="stat-label">Total Pesan</div>
                     <div class="stat-change negative">-3%</div>
+                </div>
                 </div>
                 <div class="stat-card members">
                     <div class="stat-icon">
@@ -693,13 +708,17 @@ require_login();
                             <div class="chart-option">Tahun Ini</div>
                         </div>
                     </div>
-                    <canvas id="activityChart" height="100"></canvas>
+                    <div class="chart-container">
+                        <canvas id="activityChart" height="100"></canvas>
+                    </div>
                 </div>
                 <div class="chart-card">
                     <div class="chart-header">
                         <h3 class="chart-title">Kategori Konten</h3>
                     </div>
-                    <canvas id="categoryChart" height="200"></canvas>
+                    <div class="chart-container">
+                        <canvas id="categoryChart" height="200"></canvas>
+                    </div>
                 </div>
             </div>
             
@@ -736,7 +755,6 @@ require_login();
                                 </div>
                             </div>
                         <?php endwhile; ?>
-                    <?php endif; ?>
                     
                     <?php if (mysqli_num_rows($result_recent_messages) > 0): ?>
                         <?php while ($message = mysqli_fetch_assoc($result_recent_messages)): ?>
