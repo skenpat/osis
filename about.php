@@ -15,6 +15,7 @@
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <!-- Custom CSS -->
     <link href="assets/css/style.css" rel="stylesheet">
+    <link href="assets/css/theme-toggle.css" rel="stylesheet">
     <style>
         :root {
             --primary-color: #4361ee;
@@ -87,7 +88,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: url('https://ik.imagekit.io/fles/fotbar2025.jpg?updatedAt=1766187218901') center/cover;
+            background: url('https://ik.imagekit.io/fles/fotbar2025.jpg') center/cover;
             opacity: 0.15;
             z-index: 0;
         }
@@ -482,6 +483,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="contact.php">Kontak</a>
                     </li>
+                    <button class="nav-link theme-toggle" id="theme-toggle">
+                            <i class="bi bi-moon-fill" id="theme-icon"></i>
+                        </button>
                 </ul>
             </div>
         </div>

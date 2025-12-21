@@ -15,6 +15,7 @@
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <!-- Custom CSS -->
     <link href="assets/css/style.css" rel="stylesheet">
+    <link href="assets/css/theme-toggle.css" rel="stylesheet">
     <style>
         :root {
             --primary-color: #4361ee;
@@ -87,7 +88,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: url('https://images.unsplash.com/photo-1540555700478-4be289fbecef?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80') center/cover;
+            background: url('') center/cover;
             opacity: 0.15;
             z-index: 0;
         }
@@ -402,6 +403,9 @@
                         <a class="nav-link" href="contact.php">Kontak</a>
                     </li>
                 </ul>
+                <button class="nav-link theme-toggle" id="theme-toggle">
+                            <i class="bi bi-moon-fill" id="theme-icon"></i>
+                        </button>
             </div>
         </div>
     </nav>
@@ -612,6 +616,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- AOS Animation -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="assets/js/theme.js"></script>
     <!-- Custom JS -->
     <script>
         // Initialize AOS

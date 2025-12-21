@@ -1,0 +1,79 @@
+/* Dark mode variables */
+        [data-theme="dark"] {
+            --dark-color: #f8f9fa;
+            --light-color: #2b2d42;
+            --card-bg: #343a40;
+            --text-color: #e9ecef;
+            --footer-bg: #212529;
+        }
+
+        [data-theme="dark"] .navbar {
+            background: rgba(52, 58, 64, 0.95);
+        }
+
+        /* Theme Toggle Button */
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: var(--dark-color);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        
+        .theme-toggle:hover {
+            transform: rotate(180deg);
+        }
+
+        [data-theme="dark"] .feature-card {
+            background: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        [data-theme="dark"] .news-card {
+            background: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        [data-theme="dark"] .event-card {
+            background: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        [data-theme="dark"] footer {
+            background: var(--footer-bg);
+        }
+
+        [data-theme="dark"] .calendar-widget {
+            background: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        [data-theme="dark"] .chat-box {
+            background: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        [data-theme="dark"] .chat-message.bot .chat-bubble {
+            background: #495057;
+        }
+
+        [data-theme="dark"] .chat-footer {
+            border-top-color: #495057;
+        }
+
+        [data-theme="dark"] .chat-input input {
+            background: #495057;
+            border-color: #6c757d;
+            color: var(--text-color);
+        }
+
+        [data-theme="dark"] .accordion-item {
+            background: var(--card-bg);
+            color: var(--text-color);
+        }
+
+        [data-theme="dark"] .accordion-button {
+            background: var(--card-bg);
+            color: var(--text-color);
+        }

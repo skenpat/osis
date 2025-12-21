@@ -15,6 +15,7 @@
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <!-- Custom CSS -->
     <link href="assets/css/style.css" rel="stylesheet">
+    <link href="assets/css/theme-toggle.css" rel="stylesheet">
     <style>
         :root {
             --primary-color: #4361ee;
@@ -443,6 +444,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="contact.php">Kontak</a>
                     </li>
+                    <button class="nav-link theme-toggle" id="theme-toggle">
+                            <i class="bi bi-moon-fill" id="theme-icon"></i>
+                        </button>
                 </ul>
             </div>
         </div>
@@ -670,6 +674,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <!-- AOS Animation -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="assets/js/theme.js"></script>
     <!-- Custom JS -->
     <script>
         // Initialize AOS

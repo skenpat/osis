@@ -19,8 +19,8 @@ require_once 'functions.php'; // New file for helper functions
     <!-- Open Graph Meta Tags -->
     <meta property="og:title" content="<?php echo SITE_NAME; ?> - Organisasi Siswa Intra Sekolah">
     <meta property="og:description" content="<?php echo $site_settings['meta_description'] ?? 'Organisasi Siswa Intra Sekolah SMK Negeri 4 Banjarmasin'; ?>">
-    <meta property="og:image" content="<?php echo BASE_URL; ?>assets/images/og-image.jpg">
-    <meta property="og:url" content="<?php echo BASE_URL; ?>">
+    <meta property="og:image" content="<?php echo SITE_URL; ?>assets/images/og-image.jpg">
+    <meta property="og:url" content="<?php echo SITE_URL; ?>">
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico">
@@ -51,15 +51,6 @@ require_once 'functions.php'; // New file for helper functions
             --gradient: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
         }
         
-        /* Dark mode variables */
-        [data-theme="dark"] {
-            --dark-color: #f8f9fa;
-            --light-color: #2b2d42;
-            --card-bg: #343a40;
-            --text-color: #e9ecef;
-            --footer-bg: #212529;
-        }
-        
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             overflow-x: hidden;
@@ -73,10 +64,6 @@ require_once 'functions.php'; // New file for helper functions
             box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
             z-index: 1000;
-        }
-        
-        [data-theme="dark"] .navbar {
-            background: rgba(52, 58, 64, 0.95);
         }
         
         .navbar-brand {
@@ -113,20 +100,6 @@ require_once 'functions.php'; // New file for helper functions
             color: var(--primary-color) !important;
         }
         
-        /* Theme Toggle Button */
-        .theme-toggle {
-            background: none;
-            border: none;
-            color: var(--dark-color);
-            font-size: 1.2rem;
-            cursor: pointer;
-            transition: transform 0.3s;
-        }
-        
-        .theme-toggle:hover {
-            transform: rotate(180deg);
-        }
-        
         /* Announcement Banner */
         .announcement-banner {
             background: var(--accent-color);
@@ -160,7 +133,7 @@ require_once 'functions.php'; // New file for helper functions
             left: 0;
             right: 0;
             bottom: 0;
-            background: url('https://ik.imagekit.io/fles/ketos_reno.jpg?updatedAt=1766154448985') center/cover;
+            background: url('https://res.cloudinary.com/dahcxjdbl/image/upload/v1766220516/reno_hermawan-min-compressed_wbdlnr.jpg') center/cover;
             opacity: 0.15;
             z-index: 0;
         }
@@ -269,11 +242,6 @@ require_once 'functions.php'; // New file for helper functions
             border: none;
         }
         
-        [data-theme="dark"] .feature-card {
-            background: var(--card-bg);
-            color: var(--text-color);
-        }
-        
         .feature-card:hover {
             transform: translateY(-10px);
             box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
@@ -303,11 +271,6 @@ require_once 'functions.php'; // New file for helper functions
             transition: all 0.3s ease;
             border: none;
             height: 100%;
-        }
-        
-        [data-theme="dark"] .news-card {
-            background: var(--card-bg);
-            color: var(--text-color);
         }
         
         .news-card:hover {
@@ -343,11 +306,6 @@ require_once 'functions.php'; // New file for helper functions
             transition: all 0.3s ease;
             border: none;
             height: 100%;
-        }
-        
-        [data-theme="dark"] .event-card {
-            background: var(--card-bg);
-            color: var(--text-color);
         }
         
         .event-card:hover {
@@ -414,50 +372,6 @@ require_once 'functions.php'; // New file for helper functions
         .countdown-label {
             font-size: 0.9rem;
             opacity: 0.8;
-        }
-        
-        /* Testimonial Section */
-        .testimonial-card {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
-            position: relative;
-        }
-        
-        [data-theme="dark"] .testimonial-card {
-            background: var(--card-bg);
-            color: var(--text-color);
-        }
-        
-        .testimonial-quote {
-            font-size: 1.1rem;
-            font-style: italic;
-            margin-bottom: 20px;
-        }
-        
-        .testimonial-author {
-            display: flex;
-            align-items: center;
-        }
-        
-        .testimonial-author img {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            margin-right: 15px;
-        }
-        
-        .testimonial-author h5 {
-            margin: 0;
-            font-weight: 600;
-        }
-        
-        .testimonial-author p {
-            margin: 0;
-            font-size: 0.9rem;
-            color: #6c757d;
         }
         
         /* Gallery Section */
@@ -540,10 +454,6 @@ require_once 'functions.php'; // New file for helper functions
             background: var(--dark-color);
             color: white;
             padding: 60px 0 30px;
-        }
-        
-        [data-theme="dark"] footer {
-            background: var(--footer-bg);
         }
         
         .footer-logo {
@@ -635,11 +545,6 @@ require_once 'functions.php'; // New file for helper functions
             padding: 20px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
             margin-bottom: 30px;
-        }
-        
-        [data-theme="dark"] .calendar-widget {
-            background: var(--card-bg);
-            color: var(--text-color);
         }
         
         .calendar-header {
@@ -736,11 +641,6 @@ require_once 'functions.php'; // New file for helper functions
             overflow: hidden;
         }
         
-        [data-theme="dark"] .chat-box {
-            background: var(--card-bg);
-            color: var(--text-color);
-        }
-        
         .chat-box.active {
             display: flex;
         }
@@ -788,10 +688,6 @@ require_once 'functions.php'; // New file for helper functions
             border-top-left-radius: 0;
         }
         
-        [data-theme="dark"] .chat-message.bot .chat-bubble {
-            background: #495057;
-        }
-        
         .chat-message.user .chat-bubble {
             background: var(--primary-color);
             color: white;
@@ -801,10 +697,6 @@ require_once 'functions.php'; // New file for helper functions
         .chat-footer {
             padding: 15px;
             border-top: 1px solid #eee;
-        }
-        
-        [data-theme="dark"] .chat-footer {
-            border-top-color: #495057;
         }
         
         .chat-input {
@@ -817,12 +709,6 @@ require_once 'functions.php'; // New file for helper functions
             border-radius: 20px;
             padding: 8px 15px;
             margin-right: 10px;
-        }
-        
-        [data-theme="dark"] .chat-input input {
-            background: #495057;
-            border-color: #6c757d;
-            color: var(--text-color);
         }
         
         .chat-input button {
@@ -884,21 +770,11 @@ require_once 'functions.php'; // New file for helper functions
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
         }
         
-        [data-theme="dark"] .accordion-item {
-            background: var(--card-bg);
-            color: var(--text-color);
-        }
-        
         .accordion-button {
             background: white;
             color: var(--dark-color);
             font-weight: 600;
             box-shadow: none;
-        }
-        
-        [data-theme="dark"] .accordion-button {
-            background: var(--card-bg);
-            color: var(--text-color);
         }
         
         .accordion-button:not(.collapsed) {
@@ -1261,7 +1137,7 @@ require_once 'functions.php'; // New file for helper functions
                 if (mysqli_num_rows($result) > 0) {
                     while ($row = mysqli_fetch_assoc($result)) {
                         echo '<div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="100">';
-                        echo '<div class="gallery-item" onclick="openGalleryModal(' . $row['id'] . ')">';
+                        echo '<div class="gallery-item" onclick="openGalleryModal(\'' . $row['id'] . '\', \'' . $row['title'] . '\', \'' . $row['image'] . '\')">';
                         echo '<img src="admin/uploads/gallery/' . $row['image'] . '" alt="' . $row['title'] . '">';
                         echo '<div class="gallery-overlay">';
                         echo '<i class="bi bi-zoom-in"></i>';
@@ -1486,42 +1362,13 @@ require_once 'functions.php'; // New file for helper functions
     <!-- AOS Animation -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <!-- Custom JS -->
+     <script src="assets/js/theme.js"></script>
     <script>
         // Initialize AOS
         AOS.init({
             duration: 1000,
             once: true
         });
-        
-        // Theme Toggle
-        const themeToggle = document.getElementById('theme-toggle');
-        const themeIcon = document.getElementById('theme-icon');
-        const html = document.documentElement;
-        
-        // Check for saved theme preference or default to light
-        const currentTheme = localStorage.getItem('theme') || 'light';
-        html.setAttribute('data-theme', currentTheme);
-        updateThemeIcon(currentTheme);
-        
-        themeToggle.addEventListener('click', function() {
-            const theme = html.getAttribute('data-theme');
-            const newTheme = theme === 'light' ? 'dark' : 'light';
-            
-            html.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-            document.cookie = `theme_mode=${newTheme}; path=/; max-age=31536000`; // 1 year
-            updateThemeIcon(newTheme);
-        });
-        
-        function updateThemeIcon(theme) {
-            if (theme === 'dark') {
-                themeIcon.classList.remove('bi-moon-fill');
-                themeIcon.classList.add('bi-sun-fill');
-            } else {
-                themeIcon.classList.remove('bi-sun-fill');
-                themeIcon.classList.add('bi-moon-fill');
-            }
-        }
         
         // Navbar scroll effect
         window.addEventListener('scroll', function() {
@@ -1635,7 +1482,7 @@ require_once 'functions.php'; // New file for helper functions
                 const botMessage = document.createElement('div');
                 botMessage.className = 'chat-message bot';
                 botMessage.innerHTML = `
-                    <div class="chat-bubble">Terima kasih atas pesan Anda. Kami akan segera merespons.</div>
+                    <div class="chat-bubble">Terima kasih atas pesan Anda. Kami akan segera membuangnya.</div>
                 `;
                 chatBody.appendChild(botMessage);
                 chatBody.scrollTop = chatBody.scrollHeight;
@@ -1650,16 +1497,14 @@ require_once 'functions.php'; // New file for helper functions
         });
         
         // Gallery Modal
-        function openGalleryModal(imageId) {
-            // In a real implementation, you would fetch image details from the server
-            // For now, we'll use placeholder data
+        function openGalleryModal(id, title, image) {
             const modalImage = document.getElementById('galleryModalImage');
             const modalTitle = document.getElementById('galleryModalTitle');
             const modalCaption = document.getElementById('galleryModalCaption');
             
-            // This is just a placeholder - in a real implementation, you would fetch the actual image data
-            modalImage.src = `admin/uploads/gallery/${imageId}.jpg`;
-            modalCaption.textContent = `Foto ${imageId} dari galeri OSIS`;
+            modalImage.src = `admin/uploads/gallery/${image}`;
+            modalTitle.textContent = title;
+            modalCaption.textContent = title;
             
             const galleryModal = new bootstrap.Modal(document.getElementById('galleryModal'));
             galleryModal.show();
