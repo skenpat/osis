@@ -128,7 +128,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         .login-image-content img {
             width: 200px;
             height: 200px;
-            border-radius: 50%;
             object-fit: cover;
         }
         

@@ -191,7 +191,7 @@ require_once 'functions.php'; // New file for helper functions
         
         .hero-image img {
             border-radius: 20px;
-            max-width: 70%;
+            max-width: 100%;
             height: auto;
         }
         
