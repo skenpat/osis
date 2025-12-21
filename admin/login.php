@@ -130,7 +130,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             height: 200px;
             border-radius: 50%;
             object-fit: cover;
-            border: 5px solid rgba(255, 255, 255, 0.3);
         }
         
         .login-form {

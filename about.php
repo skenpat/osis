@@ -477,10 +477,10 @@
                         <a class="nav-link" href="events.php">Kegiatan</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="contact.php">Kontak</a>
+                        <a class="nav-link" href="gallery.php">Galeri</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="admin/login.php"><i class="bi bi-lock-fill"></i> Admin</a>
+                        <a class="nav-link" href="contact.php">Kontak</a>
                     </li>
                 </ul>
             </div>

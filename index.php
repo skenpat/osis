@@ -1,11 +1,34 @@
-<?php require_once 'config.php'; ?>
+<?php 
+require_once 'config.php';
+require_once 'functions.php'; // New file for helper functions
+
+// Get site settings from database
+ $site_settings = get_site_settings($conn);
+ $theme_mode = isset($_COOKIE['theme_mode']) ? $_COOKIE['theme_mode'] : 'light';
+?>
 
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" data-theme="<?php echo $theme_mode; ?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo SITE_NAME; ?> - Organisasi Siswa Intra Sekolah</title>
+    <meta name="description" content="<?php echo $site_settings['meta_description'] ?? 'Organisasi Siswa Intra Sekolah SMK Negeri 4 Banjarmasin'; ?>">
+    <meta name="keywords" content="<?php echo $site_settings['meta_keywords'] ?? 'OSIS, SMKN 4 Banjarmasin, Organisasi Siswa'; ?>">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="<?php echo SITE_NAME; ?> - Organisasi Siswa Intra Sekolah">
+    <meta property="og:description" content="<?php echo $site_settings['meta_description'] ?? 'Organisasi Siswa Intra Sekolah SMK Negeri 4 Banjarmasin'; ?>">
+    <meta property="og:image" content="<?php echo BASE_URL; ?>assets/images/og-image.jpg">
+    <meta property="og:url" content="<?php echo BASE_URL; ?>">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico">
+    
+    <!-- Preload Critical Resources -->
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" as="style">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" as="style">
+    <link rel="preload" href="assets/css/style.css" as="style">
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -15,6 +38,9 @@
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <!-- Custom CSS -->
     <link href="assets/css/style.css" rel="stylesheet">
+    <!-- Theme Toggle CSS -->
+    <link href="assets/css/theme-toggle.css" rel="stylesheet">
+    
     <style>
         :root {
             --primary-color: #4361ee;
@@ -25,9 +51,19 @@
             --gradient: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
         }
         
+        /* Dark mode variables */
+        [data-theme="dark"] {
+            --dark-color: #f8f9fa;
+            --light-color: #2b2d42;
+            --card-bg: #343a40;
+            --text-color: #e9ecef;
+            --footer-bg: #212529;
+        }
+        
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             overflow-x: hidden;
+            transition: background-color 0.3s, color 0.3s;
         }
         
         /* Navigation */
@@ -36,6 +72,11 @@
             backdrop-filter: blur(10px);
             box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        [data-theme="dark"] .navbar {
+            background: rgba(52, 58, 64, 0.95);
         }
         
         .navbar-brand {
@@ -70,6 +111,38 @@
         
         .navbar-nav .nav-link.active {
             color: var(--primary-color) !important;
+        }
+        
+        /* Theme Toggle Button */
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: var(--dark-color);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        
+        .theme-toggle:hover {
+            transform: rotate(180deg);
+        }
+        
+        /* Announcement Banner */
+        .announcement-banner {
+            background: var(--accent-color);
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+            position: relative;
+        }
+        
+        .announcement-banner .close-btn {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            cursor: pointer;
         }
         
         /* Hero Section */
@@ -145,8 +218,7 @@
         
         .hero-image img {
             border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-            max-width: 100%;
+            max-width: 70%;
             height: auto;
         }
         
@@ -197,6 +269,11 @@
             border: none;
         }
         
+        [data-theme="dark"] .feature-card {
+            background: var(--card-bg);
+            color: var(--text-color);
+        }
+        
         .feature-card:hover {
             transform: translateY(-10px);
             box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
@@ -226,6 +303,11 @@
             transition: all 0.3s ease;
             border: none;
             height: 100%;
+        }
+        
+        [data-theme="dark"] .news-card {
+            background: var(--card-bg);
+            color: var(--text-color);
         }
         
         .news-card:hover {
@@ -261,6 +343,11 @@
             transition: all 0.3s ease;
             border: none;
             height: 100%;
+        }
+        
+        [data-theme="dark"] .event-card {
+            background: var(--card-bg);
+            color: var(--text-color);
         }
         
         .event-card:hover {
@@ -304,43 +391,29 @@
             margin-right: 5px;
         }
         
-        /* Achievement Section */
-        .achievement-card {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            text-align: center;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
-            height: 100%;
-        }
-        
-        .achievement-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
-        }
-        
-        .achievement-icon {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
+        /* Countdown Timer */
+        .countdown-timer {
             background: var(--gradient);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-        }
-        
-        .achievement-icon i {
-            font-size: 40px;
             color: white;
+            padding: 40px 0;
+            text-align: center;
         }
         
-        .achievement-number {
+        .countdown-item {
+            display: inline-block;
+            margin: 0 15px;
+            text-align: center;
+        }
+        
+        .countdown-value {
             font-size: 2.5rem;
             font-weight: 700;
-            color: var(--primary-color);
-            margin-bottom: 5px;
+            display: block;
+        }
+        
+        .countdown-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
         }
         
         /* Testimonial Section */
@@ -348,14 +421,20 @@
             background: white;
             border-radius: 15px;
             padding: 30px;
+            margin-bottom: 30px;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
-            height: 100%;
+            position: relative;
         }
         
-        .testimonial-text {
+        [data-theme="dark"] .testimonial-card {
+            background: var(--card-bg);
+            color: var(--text-color);
+        }
+        
+        .testimonial-quote {
+            font-size: 1.1rem;
             font-style: italic;
             margin-bottom: 20px;
-            color: #6c757d;
         }
         
         .testimonial-author {
@@ -377,8 +456,51 @@
         
         .testimonial-author p {
             margin: 0;
-            color: #6c757d;
             font-size: 0.9rem;
+            color: #6c757d;
+        }
+        
+        /* Gallery Section */
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+        
+        .gallery-item img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+        
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+        
+        .gallery-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .gallery-item:hover .gallery-overlay {
+            opacity: 1;
+        }
+        
+        .gallery-overlay i {
+            color: white;
+            font-size: 2rem;
         }
         
         /* CTA Section */
@@ -418,6 +540,10 @@
             background: var(--dark-color);
             color: white;
             padding: 60px 0 30px;
+        }
+        
+        [data-theme="dark"] footer {
+            background: var(--footer-bg);
         }
         
         .footer-logo {
@@ -472,6 +598,318 @@
             color: rgba(255, 255, 255, 0.7);
         }
         
+        /* Back to Top Button */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+        
+        .back-to-top.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .back-to-top:hover {
+            background: var(--secondary-color);
+            transform: translateY(-5px);
+        }
+        
+        /* Calendar Widget */
+        .calendar-widget {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+        
+        [data-theme="dark"] .calendar-widget {
+            background: var(--card-bg);
+            color: var(--text-color);
+        }
+        
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .calendar-nav {
+            background: none;
+            border: none;
+            color: var(--primary-color);
+            cursor: pointer;
+        }
+        
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+        
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .calendar-day:hover {
+            background: rgba(67, 97, 238, 0.1);
+        }
+        
+        .calendar-day.today {
+            background: var(--primary-color);
+            color: white;
+        }
+        
+        .calendar-day.has-event {
+            position: relative;
+        }
+        
+        .calendar-day.has-event::after {
+            content: '';
+            position: absolute;
+            bottom: 2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: var(--accent-color);
+        }
+        
+        /* Live Chat Widget */
+        .chat-widget {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            z-index: 999;
+        }
+        
+        .chat-button {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .chat-button:hover {
+            transform: scale(1.1);
+        }
+        
+        .chat-box {
+            position: absolute;
+            bottom: 80px;
+            left: 0;
+            width: 350px;
+            height: 450px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        [data-theme="dark"] .chat-box {
+            background: var(--card-bg);
+            color: var(--text-color);
+        }
+        
+        .chat-box.active {
+            display: flex;
+        }
+        
+        .chat-header {
+            background: var(--gradient);
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .chat-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+        
+        .chat-body {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+        }
+        
+        .chat-message {
+            margin-bottom: 15px;
+            display: flex;
+        }
+        
+        .chat-message.user {
+            justify-content: flex-end;
+        }
+        
+        .chat-bubble {
+            max-width: 70%;
+            padding: 10px 15px;
+            border-radius: 15px;
+        }
+        
+        .chat-message.bot .chat-bubble {
+            background: #f1f1f1;
+            border-top-left-radius: 0;
+        }
+        
+        [data-theme="dark"] .chat-message.bot .chat-bubble {
+            background: #495057;
+        }
+        
+        .chat-message.user .chat-bubble {
+            background: var(--primary-color);
+            color: white;
+            border-top-right-radius: 0;
+        }
+        
+        .chat-footer {
+            padding: 15px;
+            border-top: 1px solid #eee;
+        }
+        
+        [data-theme="dark"] .chat-footer {
+            border-top-color: #495057;
+        }
+        
+        .chat-input {
+            display: flex;
+        }
+        
+        .chat-input input {
+            flex: 1;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            padding: 8px 15px;
+            margin-right: 10px;
+        }
+        
+        [data-theme="dark"] .chat-input input {
+            background: #495057;
+            border-color: #6c757d;
+            color: var(--text-color);
+        }
+        
+        .chat-input button {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        
+        /* Student Council Section */
+        .council-member {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .council-member img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 15px;
+            border: 5px solid var(--primary-color);
+        }
+        
+        .council-member h5 {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .council-member p {
+            color: #6c757d;
+            margin-bottom: 10px;
+        }
+        
+        .council-member .social-links a {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            border-radius: 50%;
+            background: rgba(67, 97, 238, 0.1);
+            color: var(--primary-color);
+            margin: 0 5px;
+        }
+        
+        /* FAQ Section */
+        .accordion-item {
+            border: none;
+            margin-bottom: 15px;
+            border-radius: 10px !important;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        [data-theme="dark"] .accordion-item {
+            background: var(--card-bg);
+            color: var(--text-color);
+        }
+        
+        .accordion-button {
+            background: white;
+            color: var(--dark-color);
+            font-weight: 600;
+            box-shadow: none;
+        }
+        
+        [data-theme="dark"] .accordion-button {
+            background: var(--card-bg);
+            color: var(--text-color);
+        }
+        
+        .accordion-button:not(.collapsed) {
+            background: rgba(67, 97, 238, 0.1);
+            color: var(--primary-color);
+        }
+        
+        .accordion-button:focus {
+            box-shadow: none;
+        }
+        
         /* Responsive */
         @media (max-width: 992px) {
             .hero-title {
@@ -480,6 +918,11 @@
             
             .hero-image {
                 margin-top: 50px;
+            }
+            
+            .chat-box {
+                width: 300px;
+                height: 400px;
             }
         }
         
@@ -495,10 +938,44 @@
             .section {
                 padding: 60px 0;
             }
+            
+            .countdown-item {
+                margin: 0 5px;
+            }
+            
+            .countdown-value {
+                font-size: 1.8rem;
+            }
+            
+            .chat-widget {
+                left: 20px;
+                bottom: 20px;
+            }
+            
+            .chat-box {
+                width: calc(100vw - 40px);
+                left: -10px;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Announcement Banner -->
+    <?php
+    $announcement = get_active_announcement($conn);
+    if ($announcement):
+    ?>
+    <div class="announcement-banner" id="announcement-banner">
+        <div class="container">
+            <i class="bi bi-megaphone-fill me-2"></i>
+            <?php echo $announcement['message']; ?>
+            <button class="close-btn" onclick="closeAnnouncement()">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+    </div>
+    <?php endif; ?>
+
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg fixed-top">
         <div class="container">
@@ -521,10 +998,15 @@
                         <a class="nav-link" href="events.php">Kegiatan</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="gallery.php">Galeri</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="contact.php">Kontak</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="admin/login.php"><i class="bi bi-lock-fill"></i> Admin</a>
+                        <button class="nav-link theme-toggle" id="theme-toggle">
+                            <i class="bi bi-moon-fill" id="theme-icon"></i>
+                        </button>
                     </li>
                 </ul>
             </div>
@@ -549,6 +1031,37 @@
             </div>
         </div>
     </section>
+
+    <!-- Countdown Timer Section -->
+    <?php
+    $next_event = get_next_event($conn);
+    if ($next_event):
+    ?>
+    <section class="countdown-timer">
+        <div class="container">
+            <h3 class="mb-4"><?php echo $next_event['title']; ?> Akan Datang</h3>
+            <div class="countdown" id="countdown" data-date="<?php echo $next_event['event_date']; ?>">
+                <div class="countdown-item">
+                    <span class="countdown-value" id="days">00</span>
+                    <span class="countdown-label">Hari</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-value" id="hours">00</span>
+                    <span class="countdown-label">Jam</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-value" id="minutes">00</span>
+                    <span class="countdown-label">Menit</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-value" id="seconds">00</span>
+                    <span class="countdown-label">Detik</span>
+                </div>
+            </div>
+            <a href="event-detail.php?id=<?php echo $next_event['id']; ?>" class="btn btn-light mt-3">Detail Kegiatan</a>
+        </div>
+    </section>
+    <?php endif; ?>
 
     <!-- Features Section -->
     <section id="about" class="section">
@@ -605,8 +1118,51 @@
         </div>
     </section>
 
-    <!-- Latest News Section -->
+    <!-- Student Council Section -->
     <section class="section bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center mb-5" data-aos="fade-up">
+                    <h2 class="section-title">Pengurus OSIS</h2>
+                    <p class="section-subtitle">Tim yang berdedikasi untuk melayani siswa</p>
+                </div>
+                <?php
+                $council_members = get_council_members($conn);
+                if (count($council_members) > 0):
+                    foreach ($council_members as $member):
+                ?>
+                <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="council-member">
+                        <img src="admin/uploads/<?php echo $member['photo']; ?>" alt="<?php echo $member['name']; ?>">
+                        <h5><?php echo $member['name']; ?></h5>
+                        <p><?php echo $member['position']; ?></p>
+                        <div class="social-links">
+                            <?php if (!empty($member['instagram'])): ?>
+                            <a href="<?php echo $member['instagram']; ?>"><i class="bi bi-instagram"></i></a>
+                            <?php endif; ?>
+                            <?php if (!empty($member['twitter'])): ?>
+                            <a href="<?php echo $member['twitter']; ?>"><i class="bi bi-twitter"></i></a>
+                            <?php endif; ?>
+                            <?php if (!empty($member['linkedin'])): ?>
+                            <a href="<?php echo $member['linkedin']; ?>"><i class="bi bi-linkedin"></i></a>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+                <?php 
+                    endforeach;
+                else:
+                ?>
+                <div class="col-12 text-center">
+                    <p>Belum ada data pengurus OSIS.</p>
+                </div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </section>
+
+    <!-- Latest News Section -->
+    <section class="section">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-center mb-5" data-aos="fade-up">
@@ -643,7 +1199,7 @@
     </section>
 
     <!-- Upcoming Events Section -->
-    <section id="events" class="section">
+    <section id="events" class="section bg-light">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-center mb-5" data-aos="fade-up">
@@ -690,102 +1246,120 @@
         </div>
     </section>
 
-    <!-- Achievements Section -->
-    <section class="section bg-light">
+    <!-- Gallery Section -->
+    <section class="section">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-center mb-5" data-aos="fade-up">
-                    <h2 class="section-title">Prestasi Kami</h2>
-                    <p class="section-subtitle">Pencapaian yang telah diraih oleh OSIS SMK Negeri 4 Banjarmasin</p>
+                    <h2 class="section-title">Galeri Kegiatan</h2>
+                    <p class="section-subtitle">Dokumentasi kegiatan OSIS</p>
                 </div>
-                <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="100">
-                    <div class="achievement-card">
-                        <div class="achievement-icon">
-                            <i class="bi bi-trophy-fill"></i>
-                        </div>
-                        <div class="achievement-number">15+</div>
-                        <p>Prestasi Tingkat Kota</p>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="200">
-                    <div class="achievement-card">
-                        <div class="achievement-icon">
-                            <i class="bi bi-award-fill"></i>
-                        </div>
-                        <div class="achievement-number">8+</div>
-                        <p>Prestasi Tingkat Provinsi</p>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="300">
-                    <div class="achievement-card">
-                        <div class="achievement-icon">
-                            <i class="bi bi-star-fill"></i>
-                        </div>
-                        <div class="achievement-number">3+</div>
-                        <p>Prestasi Tingkat Nasional</p>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="400">
-                    <div class="achievement-card">
-                        <div class="achievement-icon">
-                            <i class="bi bi-people-fill"></i>
-                        </div>
-                        <div class="achievement-number">200+</div>
-                        <p>Anggota Aktif</p>
-                    </div>
+                <?php
+                $query = "SELECT * FROM gallery ORDER BY created_at DESC LIMIT 8";
+                $result = mysqli_query($conn, $query);
+                
+                if (mysqli_num_rows($result) > 0) {
+                    while ($row = mysqli_fetch_assoc($result)) {
+                        echo '<div class="col-lg-3 col-md-6 mb-4" data-aos="fade-up" data-aos-delay="100">';
+                        echo '<div class="gallery-item" onclick="openGalleryModal(' . $row['id'] . ')">';
+                        echo '<img src="admin/uploads/gallery/' . $row['image'] . '" alt="' . $row['title'] . '">';
+                        echo '<div class="gallery-overlay">';
+                        echo '<i class="bi bi-zoom-in"></i>';
+                        echo '</div>';
+                        echo '</div>';
+                        echo '</div>';
+                    }
+                } else {
+                    echo '<div class="col-12 text-center"><p>Belum ada foto galeri.</p></div>';
+                }
+                ?>
+                <div class="col-12 text-center mt-4" data-aos="fade-up">
+                    <a href="gallery.php" class="btn btn-outline-primary">Lihat Semua Foto</a>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Testimonials Section -->
-    <section class="section">
+    <section class="section bg-light">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-center mb-5" data-aos="fade-up">
                     <h2 class="section-title">Testimoni</h2>
-                    <p class="section-subtitle">Apa kata mereka tentang OSIS SMK Negeri 4 Banjarmasin</p>
+                    <p class="section-subtitle">Apa kata mereka tentang OSIS</p>
                 </div>
-                <div class="col-lg-4 mb-4" data-aos="fade-up" data-aos-delay="100">
-                    <div class="testimonial-card">
-                        <div class="testimonial-text">
-                            "Bergabung dengan OSIS telah membantu saya mengembangkan kemampuan kepemimpinan dan meningkatkan rasa percaya diri. Saya belajar banyak tentang kerjasama tim dan tanggung jawab."
-                        </div>
-                        <div class="testimonial-author">
-                            <img src="https://picsum.photos/seed/person1/100/100.jpg" alt="Testimonial">
-                            <div>
-                                <h5>Ahmad Rizki</h5>
-                                <p>Ketua OSIS 2022/2023</p>
-                            </div>
-                        </div>
+                <?php
+                $query = "SELECT * FROM testimonials ORDER BY created_at DESC LIMIT 3";
+                $result = mysqli_query($conn, $query);
+                
+                if (mysqli_num_rows($result) > 0) {
+                    while ($row = mysqli_fetch_assoc($result)) {
+                        echo '<div class="col-lg-4 mb-4" data-aos="fade-up" data-aos-delay="100">';
+                        echo '<div class="testimonial-card">';
+                        echo '<div class="testimonial-quote">';
+                        echo '<i class="bi bi-quote text-primary fs-2"></i>';
+                        echo '<p class="mt-2">' . $row['message'] . '</p>';
+                        echo '</div>';
+                        echo '<div class="testimonial-author">';
+                        echo '<img src="admin/uploads/testimonials/' . $row['photo'] . '" alt="' . $row['name'] . '">';
+                        echo '<div>';
+                        echo '<h5>' . $row['name'] . '</h5>';
+                        echo '<p>' . $row['position'] . '</p>';
+                        echo '</div>';
+                        echo '</div>';
+                        echo '</div>';
+                        echo '</div>';
+                    }
+                } else {
+                    echo '<div class="col-12 text-center"><p>Belum ada testimoni.</p></div>';
+                }
+                ?>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center mb-5" data-aos="fade-up">
+                    <h2 class="section-title">Pertanyaan yang Sering Diajukan</h2>
+                    <p class="section-subtitle">Temukan jawaban untuk pertanyaan Anda</p>
+                </div>
+                <div class="col-lg-8 mx-auto" data-aos="fade-up">
+                    <div class="accordion" id="faqAccordion">
+                        <?php
+                        $query = "SELECT * FROM faqs ORDER BY id ASC LIMIT 5";
+                        $result = mysqli_query($conn, $query);
+                        
+                        if (mysqli_num_rows($result) > 0) {
+                            $count = 0;
+                            while ($row = mysqli_fetch_assoc($result)) {
+                                $count++;
+                                echo '<div class="accordion-item">';
+                                echo '<h2 class="accordion-header" id="heading' . $count . '">';
+                                echo '<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse' . $count . '"';
+                                if ($count > 1) echo 'collapsed';
+                                echo '>';
+                                echo $row['question'];
+                                echo '</button>';
+                                echo '</h2>';
+                                echo '<div id="collapse' . $count . '" class="accordion-collapse collapse';
+                                if ($count == 1) echo ' show';
+                                echo '" data-bs-parent="#faqAccordion">';
+                                echo '<div class="accordion-body">';
+                                echo $row['answer'];
+                                echo '</div>';
+                                echo '</div>';
+                                echo '</div>';
+                            }
+                        } else {
+                            echo '<div class="text-center"><p>Belum ada FAQ.</p></div>';
+                        }
+                        ?>
                     </div>
-                </div>
-                <div class="col-lg-4 mb-4" data-aos="fade-up" data-aos-delay="200">
-                    <div class="testimonial-card">
-                        <div class="testimonial-text">
-                            "OSIS memberikan saya kesempatan untuk mengeksplorasi bakat dan minat saya. Melalui berbagai kegiatan, saya bisa mengembangkan kreativitas dan inovasi."
-                        </div>
-                        <div class="testimonial-author">
-                            <img src="https://picsum.photos/seed/person2/100/100.jpg" alt="Testimonial">
-                            <div>
-                                <h5>Siti Nurhaliza</h5>
-                                <p>Sekretaris OSIS 2022/2023</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-4 mb-4" data-aos="fade-up" data-aos-delay="300">
-                    <div class="testimonial-card">
-                        <div class="testimonial-text">
-                            "Melalui OSIS, saya belajar tentang pentingnya kontribusi bagi sekolah dan masyarakat. Ini adalah pengalaman yang sangat berharga untuk masa depan saya."
-                        </div>
-                        <div class="testimonial-author">
-                            <img src="https://picsum.photos/seed/person3/100/100.jpg" alt="Testimonial">
-                            <div>
-                                <h5>Budi Santoso</h5>
-                                <p>Anggota OSIS 2022/2023</p>
-                            </div>
-                        </div>
+                    <div class="text-center mt-4">
+                        <a href="faq.php" class="btn btn-outline-primary">Lihat Semua FAQ</a>
                     </div>
                 </div>
             </div>
@@ -826,6 +1400,7 @@
                         <li><a href="about.php">Tentang</a></li>
                         <li><a href="blog.php">Artikel</a></li>
                         <li><a href="events.php">Kegiatan</a></li>
+                        <li><a href="gallery.php">Galeri</a></li>
                         <li><a href="contact.php">Kontak</a></li>
                     </ul>
                 </div>
@@ -841,9 +1416,9 @@
                 <div class="col-lg-3 mb-4">
                     <h5>Newsletter</h5>
                     <p>Dapatkan informasi terbaru dari kami</p>
-                    <form action="#" method="POST">
+                    <form action="subscribe.php" method="POST">
                         <div class="input-group mb-3">
-                            <input type="email" class="form-control" placeholder="Email Anda" required>
+                            <input type="email" name="email" class="form-control" placeholder="Email Anda" required>
                             <button class="btn btn-primary" type="submit">Subscribe</button>
                         </div>
                     </form>
@@ -854,6 +1429,57 @@
             </div>
         </div>
     </footer>
+
+    <!-- Back to Top Button -->
+    <div class="back-to-top" id="back-to-top">
+        <i class="bi bi-arrow-up"></i>
+    </div>
+
+    <!-- Live Chat Widget -->
+    <div class="chat-widget">
+        <div class="chat-box" id="chat-box">
+            <div class="chat-header">
+                <h5 class="mb-0">Bantuan</h5>
+                <button class="chat-close" id="chat-close">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+            <div class="chat-body" id="chat-body">
+                <div class="chat-message bot">
+                    <div class="chat-bubble">
+                        Halo! Ada yang bisa saya bantu?
+                    </div>
+                </div>
+            </div>
+            <div class="chat-footer">
+                <div class="chat-input">
+                    <input type="text" id="chat-input" placeholder="Ketik pesan...">
+                    <button id="chat-send">
+                        <i class="bi bi-send"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="chat-button" id="chat-button">
+            <i class="bi bi-chat-dots-fill"></i>
+        </div>
+    </div>
+
+    <!-- Gallery Modal -->
+    <div class="modal fade" id="galleryModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="galleryModalTitle">Galeri Foto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img id="galleryModalImage" src="" alt="" class="img-fluid">
+                    <p id="galleryModalCaption" class="mt-3"></p>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Bootstrap JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -867,6 +1493,36 @@
             once: true
         });
         
+        // Theme Toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const html = document.documentElement;
+        
+        // Check for saved theme preference or default to light
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        html.setAttribute('data-theme', currentTheme);
+        updateThemeIcon(currentTheme);
+        
+        themeToggle.addEventListener('click', function() {
+            const theme = html.getAttribute('data-theme');
+            const newTheme = theme === 'light' ? 'dark' : 'light';
+            
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            document.cookie = `theme_mode=${newTheme}; path=/; max-age=31536000`; // 1 year
+            updateThemeIcon(newTheme);
+        });
+        
+        function updateThemeIcon(theme) {
+            if (theme === 'dark') {
+                themeIcon.classList.remove('bi-moon-fill');
+                themeIcon.classList.add('bi-sun-fill');
+            } else {
+                themeIcon.classList.remove('bi-sun-fill');
+                themeIcon.classList.add('bi-moon-fill');
+            }
+        }
+        
         // Navbar scroll effect
         window.addEventListener('scroll', function() {
             const navbar = document.querySelector('.navbar');
@@ -877,7 +1533,137 @@
                 navbar.style.padding = '15px 0';
                 navbar.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
             }
+            
+            // Back to top button
+            const backToTop = document.getElementById('back-to-top');
+            if (window.scrollY > 300) {
+                backToTop.classList.add('show');
+            } else {
+                backToTop.classList.remove('show');
+            }
         });
+        
+        // Back to top
+        document.getElementById('back-to-top').addEventListener('click', function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        // Countdown Timer
+        function initCountdown() {
+            const countdownElement = document.getElementById('countdown');
+            if (!countdownElement) return;
+            
+            const eventDate = new Date(countdownElement.getAttribute('data-date')).getTime();
+            
+            const countdownInterval = setInterval(function() {
+                const now = new Date().getTime();
+                const distance = eventDate - now;
+                
+                if (distance < 0) {
+                    clearInterval(countdownInterval);
+                    document.getElementById('days').innerText = '00';
+                    document.getElementById('hours').innerText = '00';
+                    document.getElementById('minutes').innerText = '00';
+                    document.getElementById('seconds').innerText = '00';
+                    return;
+                }
+                
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                
+                document.getElementById('days').innerText = days < 10 ? '0' + days : days;
+                document.getElementById('hours').innerText = hours < 10 ? '0' + hours : hours;
+                document.getElementById('minutes').innerText = minutes < 10 ? '0' + minutes : minutes;
+                document.getElementById('seconds').innerText = seconds < 10 ? '0' + seconds : seconds;
+            }, 1000);
+        }
+        
+        // Initialize countdown if exists
+        initCountdown();
+        
+        // Close Announcement Banner
+        function closeAnnouncement() {
+            const banner = document.getElementById('announcement-banner');
+            if (banner) {
+                banner.style.display = 'none';
+                // Save to cookies that user has closed the announcement
+                document.cookie = 'announcement_closed=true; path=/; max-age=86400'; // 1 day
+            }
+        }
+        
+        // Chat Widget
+        const chatButton = document.getElementById('chat-button');
+        const chatBox = document.getElementById('chat-box');
+        const chatClose = document.getElementById('chat-close');
+        const chatInput = document.getElementById('chat-input');
+        const chatSend = document.getElementById('chat-send');
+        const chatBody = document.getElementById('chat-body');
+        
+        chatButton.addEventListener('click', function() {
+            chatBox.classList.add('active');
+        });
+        
+        chatClose.addEventListener('click', function() {
+            chatBox.classList.remove('active');
+        });
+        
+        function sendMessage() {
+            const message = chatInput.value.trim();
+            if (message === '') return;
+            
+            // Add user message
+            const userMessage = document.createElement('div');
+            userMessage.className = 'chat-message user';
+            userMessage.innerHTML = `
+                <div class="chat-bubble">${message}</div>
+            `;
+            chatBody.appendChild(userMessage);
+            
+            // Clear input
+            chatInput.value = '';
+            
+            // Scroll to bottom
+            chatBody.scrollTop = chatBody.scrollHeight;
+            
+            // Simulate bot response
+            setTimeout(function() {
+                const botMessage = document.createElement('div');
+                botMessage.className = 'chat-message bot';
+                botMessage.innerHTML = `
+                    <div class="chat-bubble">Terima kasih atas pesan Anda. Kami akan segera merespons.</div>
+                `;
+                chatBody.appendChild(botMessage);
+                chatBody.scrollTop = chatBody.scrollHeight;
+            }, 1000);
+        }
+        
+        chatSend.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+        
+        // Gallery Modal
+        function openGalleryModal(imageId) {
+            // In a real implementation, you would fetch image details from the server
+            // For now, we'll use placeholder data
+            const modalImage = document.getElementById('galleryModalImage');
+            const modalTitle = document.getElementById('galleryModalTitle');
+            const modalCaption = document.getElementById('galleryModalCaption');
+            
+            // This is just a placeholder - in a real implementation, you would fetch the actual image data
+            modalImage.src = `admin/uploads/gallery/${imageId}.jpg`;
+            modalCaption.textContent = `Foto ${imageId} dari galeri OSIS`;
+            
+            const galleryModal = new bootstrap.Modal(document.getElementById('galleryModal'));
+            galleryModal.show();
+        }
     </script>
 </body>
 </html>
