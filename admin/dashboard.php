@@ -20,7 +20,8 @@ require_login();
 
 // Unread messages
  $stmt_unread = $conn->prepare("SELECT COUNT(*) as total FROM contacts WHERE status = ?");
- $stmt_unread->bind_param("s", 'unread');
+ $unread_status = 'unread';
+ $stmt_unread->bind_param("s", $unread_status);
  $stmt_unread->execute();
  $unread_messages = $stmt_unread->get_result()->fetch_assoc()['total'];
 
@@ -273,6 +274,9 @@ require_login();
             border-radius: 50px;
             font-weight: 600;
             transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
         }
         
         .logout-btn:hover {
@@ -651,7 +655,7 @@ require_login();
                         <span class="notification-badge"><?php echo $unread_messages; ?></span>
                     <?php endif; ?>
                 </button>
-                <a href="logout.php" class="btn logout-btn">
+                <a href="logout.php" class="logout-btn">
                     <i class="bi bi-box-arrow-right"></i> Logout
                 </a>
             </div>
@@ -669,7 +673,6 @@ require_login();
                     <div class="stat-label">Total Artikel</div>
                     <div class="stat-change positive">+12%</div>
                 </div>
-                </div>
                 <div class="stat-card events">
                     <div class="stat-icon">
                         <i class="bi bi-calendar-event"></i>
@@ -678,7 +681,6 @@ require_login();
                     <div class="stat-label">Total Kegiatan</div>
                     <div class="stat-change positive">+8%</div>
                 </div>
-                </div>
                 <div class="stat-card messages">
                     <div class="stat-icon">
                         <i class="bi bi-envelope"></i>
@@ -686,7 +688,6 @@ require_login();
                     <div class="stat-value"><?php echo $total_messages; ?></div>
                     <div class="stat-label">Total Pesan</div>
                     <div class="stat-change negative">-3%</div>
-                </div>
                 </div>
                 <div class="stat-card members">
                     <div class="stat-icon">
@@ -755,6 +756,7 @@ require_login();
                                 </div>
                             </div>
                         <?php endwhile; ?>
+                    <?php endif; ?>
                     
                     <?php if (mysqli_num_rows($result_recent_messages) > 0): ?>
                         <?php while ($message = mysqli_fetch_assoc($result_recent_messages)): ?>
@@ -784,6 +786,16 @@ require_login();
         
         mobileMenuToggle.addEventListener('click', function() {
             sidebar.classList.toggle('active');
+        });
+        
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            const isClickInsideSidebar = sidebar.contains(event.target);
+            const isClickOnToggle = mobileMenuToggle.contains(event.target);
+            
+            if (!isClickInsideSidebar && !isClickOnToggle && sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+            }
         });
         
         // Activity Chart
@@ -855,6 +867,9 @@ require_login();
             option.addEventListener('click', function() {
                 chartOptions.forEach(opt => opt.classList.remove('active'));
                 this.classList.add('active');
+                
+                // Here you would typically update the chart data based on the selected option
+                // For now, we're just changing the active state
             });
         });
     </script>

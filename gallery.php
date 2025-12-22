@@ -58,7 +58,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: url('https://ik.imagekit.io/fles/ketos_reno.jpg?updatedAt=1766154448985') center/cover;
+            background: url('') center/cover;
             opacity: 0.15;
             z-index: 0;
         }
